@@ -1,43 +1,34 @@
 module Main exposing (..)
 
-import Html exposing (..)
-import Models.Page exposing (..)
-import Views.Page exposing (..)
+import Html exposing(Html)
+import Models.Actions exposing (Action)
+import Models.Page as PageModel
+import Views.Page as PageView
 
 type alias Model = {
-    page : Models.Page.Model
+    page : PageModel.Model
     }
 
-type Msg = Init | Error
+init : (Model, Cmd Action)
+init = ({ page = PageModel.init }, Cmd.none)
 
-encode : Msg -> Models.Page.Action
-encode msg = case msg of
-    Init -> Models.Page.SetInitial
-    Error -> Models.Page.SetError
+update : Action -> Model -> (Model, Cmd Action)
+update action model =
+        ({ model | page = PageModel.update action model.page }, Cmd.none)
 
-decode : Models.Page.Action -> Msg
-decode action = case action of
-    Models.Page.SetInitial -> Init
-    Models.Page.SetError -> Error
-
-init : Model
-init = { page = Models.Page.init }
-
-update : Msg -> Model -> Model
-update msg model =
-    let
-        pageMsg = encode msg
-    in
-        { model | page = Models.Page.update pageMsg model.page }
-
-view : Model -> Html Msg
+view : Model -> Html Action
 view model =
-    Html.div [] [ Html.map decode <| Views.Page.view model.page ]
+    Html.div [] [ PageView.view model.page ]
 
-main : Program Never Model Msg
-main = Html.beginnerProgram {
-    model = init,
+subscriptions : Model -> Sub Action
+subscriptions model =
+    Sub.none
+
+main : Program Never Model Action
+main = Html.program {
+    init = init,
     update = update,
-    view = view
+    view = view,
+    subscriptions = subscriptions
     }
 

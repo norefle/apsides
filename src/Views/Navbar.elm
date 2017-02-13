@@ -1,20 +1,20 @@
 module Views.Navbar exposing (..)
 
-import Html exposing(..)
-import Html.Attributes exposing(..)
-import Models.Page as Page exposing(Model, Action)
+import Html exposing(Html)
+import Html.Attributes exposing(attribute)
+import Html.Events exposing(onClick)
 
-view : Page.Model -> Html Page.Action
+import Models.Page exposing(Model)
+import Models.Actions as A
+
+view : Model -> Html A.Action
 view model =
-    let
-        attr = Html.Attributes.attribute
-    in
-        Html.node "nav" [attr "class" "navbar navbar-inverse"] [
-            Html.div [attr "class" "container-fluid"] [
-                Html.ul [attr "class" "nav navbar-nav"] [
-                    Html.li [] [ Html.a [] [Html.text "Dashboard"]],
-                    Html.li [] [ Html.a [] [Html.text "Retrospective"]],
-                    Html.li [] [ Html.a [] [Html.text "Error"]]
-                ]
+    Html.node "nav" [attribute "class" "navbar navbar-inverse"] [
+        Html.div [attribute "class" "container-fluid"] [
+            Html.ul [attribute "class" "nav navbar-nav"] [
+                Html.li [] [ Html.a [ onClick (A.SetPage A.Review) ] [Html.text "Review"]],
+                Html.li [] [ Html.a [ onClick (A.SetPage A.Retrospective) ] [Html.text "Retrospective"]],
+                Html.li [] [ Html.a [ onClick (A.SetPage A.Planning) ] [Html.text "Planning"]]
             ]
+        ]
     ]

@@ -1,17 +1,14 @@
 module Models.Page exposing (..)
 
-type Action = SetInitial | SetError
-
-type PageType = Initial | Error
-
+import Models.Actions exposing(..)
 type alias Model = {
     pageType : PageType
     }
 
 init : Model
-init = { pageType = Initial }
+init = { pageType = Review }
 
 update : Action -> Model -> Model
 update action model = case action of
-    SetInitial -> { model | pageType = Initial }
-    SetError -> { model | pageType = Error }
+    SetPage page -> { model | pageType = page }
+    Idle -> model
