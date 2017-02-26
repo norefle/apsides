@@ -1,33 +1,17 @@
 module Models.Review exposing (..)
 
+import Json.Decode exposing (Decoder, string, int, list)
+import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Models.Actions exposing (..)
 
 
-type alias CodeChange =
-    { package : String
-    , added : Int
-    , removed : Int
-    , moved : Int
-    , date : String
-    }
-
-
-type alias User =
-    { name : String
-    , userpic : String
-    }
-
-
 type alias Model =
-    { user : User
-    , total : CodeChange
-    , changes : List CodeChange
-    }
+    ReviewModel
 
 
 init : Model
 init =
-    { user = { name = "@username", userpic = "user.png" }
+    { user = { name = "username", userpic = "user.png" }
     , total = { package = "Total", added = 1024, moved = 346, removed = 512, date = "Yesterday" }
     , changes =
         [ { package = "Apsides", added = 512, moved = 112, removed = 256, date = "Never" }
@@ -50,3 +34,28 @@ update action model =
 
         _ ->
             model
+
+
+fromJsonUser : Decoder User
+fromJsonUser =
+    decode User
+        |> required "name" string
+        |> required "avatar" string
+
+
+fromJsonChanges : Decoder CodeChange
+fromJsonChanges =
+    decode CodeChange
+        |> required "package" string
+        |> optional "added" int 0
+        |> optional "moved" int 0
+        |> optional "removed" int 0
+        |> optional "last" string "1970-01-01"
+
+
+fromJsonModel : Decoder ReviewModel
+fromJsonModel =
+    decode ReviewModel
+        |> required "user" fromJsonUser
+        |> required "summary" fromJsonChanges
+        |> required "changes" (list fromJsonChanges)

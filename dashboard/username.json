@@ -1,0 +1,30 @@
+{
+    "user": {
+        "name": "username",
+        "avatar": "user.png"
+    },
+    "summary" : {
+        "package": "Total",
+        "added": 1234,
+        "moved": 123,
+        "removed": 209
+    },
+    "changes": [
+        {
+            "package": "Apsides",
+            "url": "github/apsides",
+            "added": 1024,
+            "removed": 340,
+            "moved": 10,
+            "last": "2017-01-12"
+        },
+        {
+            "package": "Leser",
+            "url": "github/leser",
+            "added": 512,
+            "removed": 40,
+            "moved": 122,
+            "last": "2017-02-02"
+        }
+    ]
+}

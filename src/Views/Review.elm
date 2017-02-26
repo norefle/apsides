@@ -2,13 +2,13 @@ module Views.Review exposing (..)
 
 import Html exposing (Html)
 import Html.Attributes exposing (attribute)
-import Models.Actions as A
-import Models.Review exposing (Model, CodeChange)
+import Models.Actions exposing (Action)
+import Models.Review exposing (Model)
 import Views.Components.ChangeStatusBar as Progressbar
 import Views.Components.ChangeSummary as Changes
 
 
-view : Model -> Html A.Action
+view : Model -> Html Action
 view model =
     Html.div []
         [ Html.div [ attribute "class" "row" ]

@@ -13,12 +13,20 @@ type alias Model =
 
 init : ( Model, Cmd Action )
 init =
-    ( { page = PageModel.init }, Cmd.none )
+    let
+        ( pageModel, pageAction ) =
+            PageModel.init
+    in
+        ( { page = pageModel }, pageAction )
 
 
 update : Action -> Model -> ( Model, Cmd Action )
 update action model =
-    ( { model | page = PageModel.update action model.page }, Cmd.none )
+    let
+        ( pageModel, pageAction ) =
+            PageModel.update action model.page
+    in
+        ( { model | page = pageModel }, pageAction )
 
 
 view : Model -> Html Action

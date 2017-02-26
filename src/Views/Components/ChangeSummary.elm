@@ -2,7 +2,7 @@ module Views.Components.ChangeSummary exposing (..)
 
 import Html exposing (Html)
 import Html.Attributes exposing (attribute)
-import Models.Review exposing (CodeChange)
+import Models.Actions exposing (CodeChange)
 import Views.Components.ChangeStatusBar as Progressbar
 
 
