@@ -1,8 +1,15 @@
 module Models.Actions exposing (..)
 
-type PageType = Review
+
+type PageType
+    = Review
     | Retrospective
     | Planning
 
-type Action = Idle
+
+type Action
+    = Idle
     | SetPage PageType
+    | ReviewUpdateUserName String
+    | ReviewUpdateUserPic String
+    | ReviewUpdateCode String
