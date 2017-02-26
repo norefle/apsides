@@ -7,6 +7,7 @@ type alias CodeChange =
     { package : String
     , added : Int
     , removed : Int
+    , moved : Int
     , date : String
     }
 
@@ -27,10 +28,10 @@ type alias Model =
 init : Model
 init =
     { user = { name = "@username", userpic = "user.png" }
-    , total = { package = "Total", added = 1024, removed = 512, date = "Yesterday" }
+    , total = { package = "Total", added = 1024, moved = 346, removed = 512, date = "Yesterday" }
     , changes =
-        [ { package = "Apsides", added = 512, removed = 256, date = "Never" }
-        , { package = "Leser", added = 512, removed = 256, date = "Tomorrow" }
+        [ { package = "Apsides", added = 512, moved = 112, removed = 256, date = "Never" }
+        , { package = "Leser", added = 512, moved = 234, removed = 256, date = "Tomorrow" }
         ]
     }
 
