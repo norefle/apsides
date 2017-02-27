@@ -25,6 +25,18 @@
             "removed": 40,
             "moved": 122,
             "last": "2017-02-02"
+        },
+        {
+            "package": "Arenero",
+            "url": "github/arenero",
+            "added": 458,
+            "removed": 546,
+            "last": "2017-03-01"
+        },
+        {
+            "package": "Thermometer",
+            "url": "github/release-thermometer",
+            "removed": 140
         }
     ]
 }

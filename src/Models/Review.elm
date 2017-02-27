@@ -48,8 +48,8 @@ fromJsonChanges =
     decode CodeChange
         |> required "package" string
         |> optional "added" int 0
-        |> optional "moved" int 0
         |> optional "removed" int 0
+        |> optional "moved" int 0
         |> optional "last" string "1970-01-01"
 
 

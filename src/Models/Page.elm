@@ -8,7 +8,7 @@ import Models.Review as PageReview
 
 type alias Model =
     { pageType : PageType
-    , reviewData : PageReview.Model
+    , reviewData : Maybe PageReview.Model
     , error : Maybe String
     }
 
@@ -16,7 +16,7 @@ type alias Model =
 init : ( Model, Cmd Action )
 init =
     ( { pageType = Review
-      , reviewData = PageReview.init
+      , reviewData = Nothing
       , error = Nothing
       }
     , Task.perform identity (Task.succeed (SetPage Review))
@@ -27,7 +27,7 @@ update : Action -> Model -> ( Model, Cmd Action )
 update action model =
     case action of
         SetPage Review ->
-            ( { model | pageType = Review }, requestReview model.reviewData.user.name )
+            ( { model | pageType = Review }, requestReview "username" )
 
         SetPage page ->
             ( { model | pageType = page }, Cmd.none )
@@ -36,7 +36,7 @@ update action model =
             ( model, Cmd.none )
 
         ReviewUpdate (Ok user) ->
-            ( { model | pageType = Review, reviewData = user }, Cmd.none )
+            ( { model | pageType = Review, reviewData = Just user }, Cmd.none )
 
         ReviewUpdate (Err value) ->
             ( { model | pageType = Planning, error = Just (toString value) }, Cmd.none )
@@ -58,4 +58,9 @@ requestReview user =
 
 updateReview : Action -> Model -> Model
 updateReview action model =
-    { model | reviewData = PageReview.update action model.reviewData }
+    case model.reviewData of
+        Just data ->
+            { model | reviewData = Just <| PageReview.update action data }
+
+        Nothing ->
+            model

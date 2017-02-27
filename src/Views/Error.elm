@@ -2,17 +2,16 @@ module Views.Error exposing (..)
 
 import Html exposing (Html)
 import Html.Attributes exposing (attribute)
-import Models.Actions as A
-import Models.Page exposing (Model)
+import Models.Actions exposing (Action)
 
 
-view : Model -> Html A.Action
+view : Maybe a -> Html Action
 view model =
     let
         error =
-            case model.error of
+            case model of
                 Just value ->
-                    value
+                    toString value
 
                 Nothing ->
                     ""
@@ -21,13 +20,4 @@ view model =
             [ attribute "class" "alert alert-danger"
             , attribute "role" "alert"
             ]
-            [ case model.pageType of
-                A.Review ->
-                    Html.text "404: Review"
-
-                A.Retrospective ->
-                    Html.text "404: Retrospective"
-
-                A.Planning ->
-                    Html.text ("404: Planning: " ++ error)
-            ]
+            [ Html.text ("404: " ++ error) ]

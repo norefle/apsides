@@ -39,4 +39,4 @@ percentage total value =
             else
                 toFloat value
     in
-        "width: " ++ (Round.round 0 <| ratio * 100) ++ "%"
+        "width: " ++ (Round.floor 0 <| ratio * 100) ++ "%"

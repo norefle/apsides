@@ -17,6 +17,7 @@ view model =
                     [ Html.div [ attribute "class" "panel-heading" ] [ Html.text "User" ]
                     , Html.div [ attribute "class" "panel-body" ]
                         [ Html.img [ attribute "src" ("img/" ++ model.user.userpic) ] []
+                        , Html.br [] []
                         , Html.text model.user.name
                         ]
                     ]
