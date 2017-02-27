@@ -26,13 +26,17 @@ view model =
                 [ Html.div [ attribute "class" "panel panel-default" ]
                     [ Html.div [ attribute "class" "panel-heading" ] [ Html.text "Summary" ]
                     , Html.div [ attribute "class" "panel-body" ]
-                        [ Progressbar.view model.total.added model.total.moved model.total.removed ]
+                        [ Progressbar.view model.total.added model.total.removed ]
                     ]
                 ]
             ]
         , Html.div [ attribute "class" "row" ]
             [ Html.div [ attribute "class" "panel-default" ]
-                [ Html.div [ attribute "class" "panel-heading" ] [ Html.text "Changes" ]
+                [ Html.div [ attribute "class" "panel-heading" ]
+                    [ Html.text "Changes "
+                    , Html.span [ attribute "class" "badge" ]
+                        [ Html.text <| toString <| List.length model.changes ]
+                     ]
                 , Html.div [ attribute "class" "panel-body" ]
                     (List.map
                         Changes.view

@@ -6,7 +6,6 @@
     "summary" : {
         "package": "Total",
         "added": 1234,
-        "moved": 123,
         "removed": 209
     },
     "changes": [
@@ -15,28 +14,30 @@
             "url": "github/apsides",
             "added": 1024,
             "removed": 340,
-            "moved": 10,
-            "last": "2017-01-12"
+            "last": 1473251216,
+            "description": "Add support for descriptions.\n* Update model.\n* Update view."
         },
         {
             "package": "Leser",
             "url": "github/leser",
             "added": 512,
             "removed": 40,
-            "moved": 122,
-            "last": "2017-02-02"
+            "last": 1473251216,
+            "description": "Inital commit."
         },
         {
             "package": "Arenero",
             "url": "github/arenero",
             "added": 458,
             "removed": 546,
-            "last": "2017-03-01"
+            "last": 1473251216,
+            "description": "Inital commit."
         },
         {
             "package": "Thermometer",
             "url": "github/release-thermometer",
-            "removed": 140
+            "removed": 140,
+            "description": "Inital commit."
         }
     ]
 }

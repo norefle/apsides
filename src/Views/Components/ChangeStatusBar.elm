@@ -5,28 +5,23 @@ import Html.Attributes exposing (attribute)
 import Round exposing (round)
 
 
-view : Int -> Int -> Int -> Html msg
-view added moved removed =
+view : Int -> Int -> Html msg
+view added removed =
     let
         total =
-            added + moved + removed
+            added + removed
     in
         Html.div [ attribute "class" "progress" ]
             [ Html.div
                 [ attribute "class" "progress-bar progress-bar-success progress-bar-striped"
                 , attribute "style" (percentage total added)
                 ]
-                [ Html.text <| "Added: " ++ (toString added) ++ " lines" ]
-            , Html.div
-                [ attribute "class" "progress-bar progress-bar-warning progress-bar-striped"
-                , attribute "style" (percentage total moved)
-                ]
-                [ Html.text <| "Moved: " ++ (toString moved) ++ " lines" ]
+                [ Html.text <| toString added ]
             , Html.div
                 [ attribute "class" "progress-bar progress-bar-danger progress-bar-striped"
                 , attribute "style" (percentage total removed)
                 ]
-                [ Html.text <| "Deleted: " ++ (toString removed) ++ " lines" ]
+                [ Html.text <| toString removed ]
             ]
 
 

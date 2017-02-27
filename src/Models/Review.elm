@@ -12,11 +12,8 @@ type alias Model =
 init : Model
 init =
     { user = { name = "username", userpic = "user.png" }
-    , total = { package = "Total", added = 1024, moved = 346, removed = 512, date = "Yesterday" }
-    , changes =
-        [ { package = "Apsides", added = 512, moved = 112, removed = 256, date = "Never" }
-        , { package = "Leser", added = 512, moved = 234, removed = 256, date = "Tomorrow" }
-        ]
+    , total = { package = "Total", added = 0, removed = 0, date = 0, description = "", url = "" }
+    , changes = []
     }
 
 
@@ -49,8 +46,9 @@ fromJsonChanges =
         |> required "package" string
         |> optional "added" int 0
         |> optional "removed" int 0
-        |> optional "moved" int 0
-        |> optional "last" string "1970-01-01"
+        |> optional "last" int 0
+        |> optional "description" string ""
+        |> optional "url" string ""
 
 
 fromJsonModel : Decoder ReviewModel

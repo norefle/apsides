@@ -7,8 +7,9 @@ type alias CodeChange =
     { package : String
     , added : Int
     , removed : Int
-    , moved : Int
-    , date : String
+    , date : Int
+    , description : String
+    , url : String
     }
 
 
