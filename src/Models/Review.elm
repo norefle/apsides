@@ -18,19 +18,7 @@ init =
 
 
 update : Action -> Model -> Model
-update action model =
-    case action of
-        ReviewUpdateUserName name ->
-            { model | user = { name = name, userpic = model.user.userpic } }
-
-        ReviewUpdateUserPic url ->
-            { model | user = { name = model.user.name, userpic = url } }
-
-        ReviewUpdateCode document ->
-            { model | changes = [] }
-
-        _ ->
-            model
+update action model = model
 
 
 fromJsonUser : Decoder User

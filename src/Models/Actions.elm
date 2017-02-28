@@ -19,6 +19,11 @@ type alias User =
     }
 
 
+type alias Input =
+    { name : String
+    }
+
+
 type alias ReviewModel =
     { user : User
     , total : CodeChange
@@ -37,5 +42,4 @@ type Action
     | SetPage PageType
     | ReviewUpdate (Result Http.Error ReviewModel)
     | ReviewUpdateUserName String
-    | ReviewUpdateUserPic String
-    | ReviewUpdateCode String
+    | ReviewUpdateChangeUser

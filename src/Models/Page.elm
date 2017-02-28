@@ -10,6 +10,7 @@ type alias Model =
     { pageType : PageType
     , reviewData : Maybe PageReview.Model
     , error : Maybe String
+    , updates : Input
     }
 
 
@@ -18,6 +19,7 @@ init =
     ( { pageType = Review
       , reviewData = Nothing
       , error = Nothing
+      , updates = { name = "" }
       }
     , Task.perform identity (Task.succeed (SetPage Review))
     )
@@ -41,14 +43,15 @@ update action model =
         ReviewUpdate (Err value) ->
             ( { model | pageType = Planning, error = Just (toString value) }, Cmd.none )
 
-        ReviewUpdateUserName _ ->
-            ( updateReview action model, Cmd.none )
+        ReviewUpdateUserName name ->
+            ( { model | updates = { name = name } }, Cmd.none )
 
-        ReviewUpdateUserPic _ ->
-            ( updateReview action model, Cmd.none )
-
-        ReviewUpdateCode _ ->
-            ( updateReview action model, Cmd.none )
+        ReviewUpdateChangeUser ->
+            case model.reviewData of
+                Just data ->
+                    ( model, requestReview model.updates.name )
+                Nothing ->
+                    ( model, Cmd.none )
 
 
 requestReview : String -> Cmd Action
