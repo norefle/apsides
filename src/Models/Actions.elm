@@ -18,6 +18,7 @@ type alias UserSummary =
     , packages : Int
     , files : Int
     , lines : Int
+    , reviews : Int
     }
 
 

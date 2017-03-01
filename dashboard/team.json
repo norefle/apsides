@@ -7,7 +7,8 @@
                 "commits": 4,
                 "packages": 4,
                 "files": 128,
-                "lines": 1443
+                "lines": 1443,
+                "reviews": 4
                 }
         },
         {
@@ -17,7 +18,8 @@
                 "commits": 2,
                 "packages": 2,
                 "files": 17,
-                "lines": 1729
+                "lines": 1729,
+                "reviews": 2
             }
         }
     ]

@@ -78,12 +78,13 @@ append left right =
     , packages = left.packages + right.packages
     , files = left.files + right.files
     , lines = left.lines + right.lines
+    , reviews = left.reviews + right.reviews
     }
 
 
 summary : List User -> UserSummary
 summary users =
-    List.map (\user -> user.summary) users |> List.foldl append (UserSummary 0 0 0 0)
+    List.map (\user -> user.summary) users |> List.foldl append (UserSummary 0 0 0 0 0)
 
 
 requestTeam : Cmd Action
@@ -93,7 +94,7 @@ requestTeam =
 
 requestReview : String -> Cmd Action
 requestReview user =
-    Http.send ReviewUpdate (Http.get ("/dashboard/" ++ user ++ ".json") PageReview.fromJsonModel)
+    Http.send ReviewUpdate (Http.get ("/dashboard/commits/" ++ user ++ ".json") PageReview.fromJsonModel)
 
 
 updateReview : Action -> Model -> Model

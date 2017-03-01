@@ -19,6 +19,7 @@ init =
             , packages = 0
             , files = 0
             , lines = 0
+            , reviews = 0
             }
         }
     , changes = []
@@ -37,6 +38,7 @@ fromJsonUserSummary =
         |> optional "packages" int 0
         |> optional "files" int 0
         |> optional "lines" int 0
+        |> optional "reviews" int 0
 
 
 fromJsonUser : Decoder User
@@ -69,4 +71,4 @@ fromJsonTeam : Decoder Team
 fromJsonTeam =
     decode Team
         |> required "users" (list fromJsonUser)
-        |> hardcoded (UserSummary 0 0 0 0)
+        |> hardcoded (UserSummary 0 0 0 0 0)
