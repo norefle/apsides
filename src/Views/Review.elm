@@ -2,7 +2,7 @@ module Views.Review exposing (..)
 
 import Html exposing (Html)
 import Html.Attributes exposing (attribute)
-import Models.Actions exposing (Action, ReviewModel, Team)
+import Models.Actions exposing (Action, ReviewModel, Team, User)
 import Views.Components.ChangeSummary as Changes
 import Views.Components.UserSummary as UserSummary
 
@@ -11,7 +11,7 @@ view : Team -> ReviewModel -> Html Action
 view team model =
     Html.div []
         [ Html.div [ attribute "class" "row" ]
-            [ Html.div [ attribute "class" "col-md-4 text-center" ]
+            [ Html.div [ attribute "class" "col-md-3 text-center" ]
                 [ Html.div [ attribute "class" "panel panel-default" ]
                     [ Html.div [ attribute "class" "panel-heading" ] [ Html.text "User" ]
                     , Html.div [ attribute "class" "panel-body" ]
@@ -25,14 +25,14 @@ view team model =
                         ]
                     ]
                 ]
-            , Html.div [ attribute "class" "col-md-8" ]
+            , Html.div [ attribute "class" "col-md-9" ]
                 [ Html.div [ attribute "class" "panel panel-default" ]
                     [ Html.div [ attribute "class" "panel-heading" ] [ Html.text "Team" ]
                     , Html.div [ attribute "class" "panel-body" ]
-                        [ Html.table [ attribute "class" "table" ]
+                        [ Html.table [ attribute "class" "table table-striped" ]
                             [ Html.colgroup []
                                 [ Html.col [ attribute "class" "col-md-1" ] []
-                                , Html.col [ attribute "class" "col-md-3" ] []
+                                , Html.col [ attribute "class" "col-md-4" ] []
                                 , Html.col [ attribute "class" "col-md-1" ] []
                                 , Html.col [ attribute "class" "col-md-1" ] []
                                 , Html.col [ attribute "class" "col-md-1" ] []
@@ -48,7 +48,7 @@ view team model =
                                     , Html.td [] [ Html.text "line" ]
                                     ]
                                  )
-                                    :: List.map (UserSummary.view team.summary) (List.indexedMap (,) team.users)
+                                    :: List.map (UserSummary.view team.summary) (List.indexedMap (,) (List.sortWith getCommits team.users))
                                 )
                             ]
                         ]
@@ -56,8 +56,9 @@ view team model =
                 ]
             ]
         , Html.div [ attribute "class" "row" ]
-            [ Html.div [ attribute "class" "col-md-12" ]
-                [ Html.div [ attribute "class" "panel-default" ]
+            [ Html.div [ attribute "class" "col-md-3" ] []
+            , Html.div [ attribute "class" "col-md-9" ]
+                [ Html.div [ attribute "class" "panel panel-default" ]
                     [ Html.div [ attribute "class" "panel-heading" ]
                         [ Html.text "Changes "
                         , Html.span [ attribute "class" "badge" ]
@@ -72,3 +73,16 @@ view team model =
                 ]
             ]
         ]
+
+
+getCommits : User -> User -> Order
+getCommits left right =
+    case compare left.summary.commits right.summary.commits of
+        LT ->
+            GT
+
+        EQ ->
+            EQ
+
+        GT ->
+            LT
