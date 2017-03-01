@@ -20,4 +20,8 @@ view model =
             [ attribute "class" "alert alert-danger"
             , attribute "role" "alert"
             ]
-            [ Html.text ("404: " ++ error) ]
+            [ Html.p []
+                [ Html.text "404: Error"
+                , Html.pre [ ] [ Html.code [ ] [ Html.text error ] ]
+                ]
+            ]
