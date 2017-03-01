@@ -12,16 +12,22 @@ view : Model -> Html A.Action
 view model =
     Html.div []
         [ Navbar.view model
-        , showPage model.pageType model.reviewData model.error
+        , showPage model.pageType model.team model.reviewData model.error
         ]
 
-showPage : A.PageType -> Maybe A.ReviewModel -> Maybe b -> Html A.Action
-showPage page model error =
+
+showPage : A.PageType -> Maybe A.Team -> Maybe A.ReviewModel -> Maybe b -> Html A.Action
+showPage page team model error =
     case page of
         A.Review ->
             case model of
                 Just data ->
-                    ReviewPage.view data
+                    case team of
+                        Just teamData ->
+                            ReviewPage.view teamData data
+
+                        Nothing ->
+                            showEmptyPage
 
                 Nothing ->
                     showEmptyPage

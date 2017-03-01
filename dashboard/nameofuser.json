@@ -1,12 +1,13 @@
 {
     "user": {
         "name": "nameofuser",
-        "avatar": "user.png"
-    },
-    "summary" : {
-        "package": "Total",
-        "added": 1520,
-        "removed": 209
+        "avatar": "user.png",
+        "summary": {
+            "commits": 2,
+            "packages": 2,
+            "files": 17,
+            "lines": 1729
+        }
     },
     "changes": [
         {

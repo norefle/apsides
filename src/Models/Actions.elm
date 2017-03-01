@@ -13,9 +13,24 @@ type alias CodeChange =
     }
 
 
+type alias UserSummary =
+    { commits : Int
+    , packages : Int
+    , files : Int
+    , lines : Int
+    }
+
+
 type alias User =
     { name : String
     , userpic : String
+    , summary : UserSummary
+    }
+
+
+type alias Team =
+    { users : List User
+    , summary : UserSummary
     }
 
 
@@ -26,7 +41,6 @@ type alias Input =
 
 type alias ReviewModel =
     { user : User
-    , total : CodeChange
     , changes : List CodeChange
     }
 
@@ -35,11 +49,13 @@ type PageType
     = Review
     | Retrospective
     | Planning
+    | Error
 
 
 type Action
     = Idle
     | SetPage PageType
     | ReviewUpdate (Result Http.Error ReviewModel)
+    | ReviewTeamUpdate (Result Http.Error Team)
     | ReviewUpdateUserName String
-    | ReviewUpdateChangeUser
+    | ReviewUpdateChangeUser String

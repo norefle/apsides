@@ -1,4 +1,4 @@
-module Views.Components.ChangeStatusBar exposing (view)
+module Views.Components.Progressbar exposing (view)
 
 import Html exposing (Html)
 import Html.Attributes exposing (attribute)
@@ -6,22 +6,19 @@ import Round exposing (round)
 
 
 view : Int -> Int -> Html msg
-view added removed =
+view max value =
     let
-        total =
-            added + removed
+        percents =
+            percentage max value
     in
         Html.div [ attribute "class" "progress" ]
             [ Html.div
                 [ attribute "class" "progress-bar progress-bar-success"
-                , attribute "style" (percentage total added)
+                , attribute "aria-valuenow" (toString value)
+                , attribute "aria-valuemax" (toString max)
+                , attribute "style" ("width: " ++ percents ++ "%")
                 ]
-                [ Html.text <| toString added ]
-            , Html.div
-                [ attribute "class" "progress-bar progress-bar-danger"
-                , attribute "style" (percentage total removed)
-                ]
-                [ Html.text <| toString removed ]
+                [ Html.text <| (toString value) ++ " (" ++ percents ++ "%)" ]
             ]
 
 
@@ -34,4 +31,4 @@ percentage total value =
             else
                 toFloat value
     in
-        "width: " ++ (Round.floor 0 <| ratio * 100) ++ "%"
+        Round.floor 0 <| ratio * 100

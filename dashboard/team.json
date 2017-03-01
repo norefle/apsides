@@ -1,0 +1,25 @@
+{
+    "users": [
+        {
+            "name": "username",
+            "avatar": "user.png",
+            "summary": {
+                "commits": 4,
+                "packages": 4,
+                "files": 128,
+                "lines": 1443
+                }
+        },
+        {
+            "name": "nameofuser",
+            "avatar": "user.png",
+            "summary": {
+                "commits": 2,
+                "packages": 2,
+                "files": 17,
+                "lines": 1729
+            }
+        }
+    ]
+
+}
