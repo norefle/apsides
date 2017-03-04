@@ -32,6 +32,36 @@ update action model =
     model
 
 
+updateUser : Maybe Model -> User -> Maybe Model
+updateUser maybe user =
+    case maybe of
+        Just model ->
+            Just { model | user = user }
+
+        Nothing ->
+            Nothing
+
+
+updateChanges : Maybe Model -> List CodeChange -> Maybe Model
+updateChanges maybe changes =
+    case maybe of
+        Just model ->
+            Just { model | changes = changes }
+
+        Nothing ->
+            Nothing
+
+
+updateReviews : Maybe Model -> List CodeReview -> Maybe Model
+updateReviews maybe reviews =
+    case maybe of
+        Just model ->
+            Just { model | reviews = reviews }
+
+        Nothing ->
+            Nothing
+
+
 fromJsonUserSummary : Decoder UserSummary
 fromJsonUserSummary =
     decode UserSummary
@@ -50,8 +80,8 @@ fromJsonUser =
         |> required "summary" fromJsonUserSummary
 
 
-fromJsonChanges : Decoder CodeChange
-fromJsonChanges =
+fromJsonCodeChange : Decoder CodeChange
+fromJsonCodeChange =
     decode CodeChange
         |> required "package" string
         |> optional "added" int 0
@@ -59,6 +89,12 @@ fromJsonChanges =
         |> optional "last" int 0
         |> optional "description" string ""
         |> optional "url" string ""
+
+
+fromJsonChanges : Decoder (List CodeChange)
+fromJsonChanges =
+    decode (identity)
+        |> required "changes" (list fromJsonCodeChange)
 
 
 fromJsonCodeReview : Decoder CodeReview
@@ -82,7 +118,7 @@ fromJsonModel : Decoder ReviewModel
 fromJsonModel =
     decode ReviewModel
         |> required "user" fromJsonUser
-        |> required "changes" (list fromJsonChanges)
+        |> required "changes" (list fromJsonCodeChange)
         |> hardcoded []
 
 

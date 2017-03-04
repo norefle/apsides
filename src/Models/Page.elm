@@ -34,50 +34,65 @@ update action model =
             ( { model | pageType = Review }, requestTeam )
 
         SetPage page ->
-            ( { model | pageType = page }, Cmd.none )
+            ( setError model "Not found", Cmd.none )
 
         Idle ->
             ( model, Cmd.none )
 
-        ReviewTeamUpdate (Ok team) ->
+        ReviewUpdateTeam (Ok team) ->
             let
-                firstUserName =
+                initData =
+                    PageReview.init
+
+                firstUser =
                     case List.head team.users of
                         Just user ->
-                            user.name
+                            user
 
                         Nothing ->
-                            "username"
+                            initData.user
             in
-                ( { model | team = Just { users = team.users, summary = summary team.users } }, requestUser firstUserName )
+                ( { model
+                    | team = Just { users = team.users, summary = summary team.users }
+                    , reviewData = PageReview.updateUser (Just initData) firstUser
+                  }
+                , requestReviews firstUser.name
+                )
 
-        ReviewTeamUpdate (Err value) ->
-            ( { model | pageType = Error, error = Just (toString value) }, Cmd.none )
+        ReviewUpdateTeam (Err value) ->
+            ( setError model <| toString value, Cmd.none )
 
-        ReviewUpdate (Ok user) ->
-            ( { model | pageType = Review, reviewData = Just user }, requestReview user.user.name )
-
-        ReviewUpdate (Err value) ->
-            ( { model | pageType = Error, error = Just (toString value) }, Cmd.none )
-
-        ReviewUpdateUserName name ->
+        ReviewUpdateSetName name ->
             ( { model | updates = { name = name } }, Cmd.none )
 
-        ReviewUpdateChangeUser user ->
-            ( model, requestUser user )
+        ReviewUpdateSetUser user ->
+            ( model, requestReviews user )
 
         ReviewUpdateCodeReview (Ok reviews) ->
-            case model.reviewData of
+            ( { model | reviewData = PageReview.updateReviews model.reviewData reviews }
+            , case model.reviewData of
                 Just data ->
-                    ( { model | reviewData = Just { data | reviews = reviews } }
-                    , Cmd.none
-                    )
+                    requestChanges data.user.name
 
                 Nothing ->
-                    ( model, Cmd.none )
+                    Cmd.none
+            )
 
         ReviewUpdateCodeReview (Err value) ->
-            ( { model | pageType = Error, error = Just (toString value) }, Cmd.none )
+            ( setError model <| toString value, Cmd.none )
+
+        ReviewUpdateCodeChange (Ok changes) ->
+            ( { model | reviewData = PageReview.updateChanges model.reviewData changes }
+            , Cmd.none
+            )
+
+        ReviewUpdateCodeChange (Err value) ->
+            ( setError model <| toString value, Cmd.none )
+
+
+setError : Model -> String -> Model
+setError model error =
+    { model | pageType = Error, error = Just error }
 
 
 append : UserSummary -> UserSummary -> UserSummary
@@ -97,24 +112,24 @@ summary users =
 
 requestTeam : Cmd Action
 requestTeam =
-    Http.send ReviewTeamUpdate (Http.get "/dashboard/team.json" PageReview.fromJsonTeam)
+    Http.send ReviewUpdateTeam (Http.get "/dashboard/team.json" PageReview.fromJsonTeam)
 
 
-requestUser : String -> Cmd Action
-requestUser user =
-    Http.send ReviewUpdate (Http.get ("/dashboard/commits/" ++ user ++ ".json") PageReview.fromJsonModel)
+requestChanges : String -> Cmd Action
+requestChanges user =
+    Http.send
+        ReviewUpdateCodeChange
+        (Http.get
+            ("/dashboard/commits/" ++ user ++ ".json")
+            PageReview.fromJsonChanges
+        )
 
 
-requestReview : String -> Cmd Action
-requestReview user =
-    Http.send ReviewUpdateCodeReview (Http.get ("/dashboard/reviews/" ++ user ++ ".json") PageReview.fromJsonReviews)
-
-
-updateReview : Action -> Model -> Model
-updateReview action model =
-    case model.reviewData of
-        Just data ->
-            { model | reviewData = Just <| PageReview.update action data }
-
-        Nothing ->
-            model
+requestReviews : String -> Cmd Action
+requestReviews user =
+    Http.send
+        ReviewUpdateCodeReview
+        (Http.get
+            ("/dashboard/reviews/" ++ user ++ ".json")
+            PageReview.fromJsonReviews
+        )

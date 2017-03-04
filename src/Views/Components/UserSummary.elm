@@ -13,7 +13,7 @@ view total indexedUser =
     in
         Html.tr []
             [ Html.td [] [ Html.text (toString index) ]
-            , Html.td [] [ Html.a [ onClick (A.ReviewUpdateChangeUser user.name) ] [ Html.text user.name ] ]
+            , Html.td [] [ Html.a [ onClick (A.ReviewUpdateSetUser user.name) ] [ Html.text user.name ] ]
             , Html.td [] [ Html.text <| toString user.summary.reviews ]
             , Html.td [] [ Html.text <| toString user.summary.commits ]
             , Html.td [] [ Html.text <| toString user.summary.packages ]

@@ -23,14 +23,14 @@ view model =
                         [ attribute "type" "text"
                         , attribute "placeholder" "username"
                         , attribute "class" "form-control"
-                        , onInput A.ReviewUpdateUserName
+                        , onInput A.ReviewUpdateSetName
                         ]
                         []
                     ]
                 , Html.li []
                     [ Html.button
                         [ attribute "class" "btn btn-default"
-                        , onClick (A.ReviewUpdateChangeUser model.updates.name)
+                        , onClick (A.ReviewUpdateSetUser model.updates.name)
                         ]
                         [ Html.text "Go" ]
                     ]

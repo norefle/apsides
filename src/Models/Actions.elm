@@ -67,8 +67,8 @@ type PageType
 type Action
     = Idle
     | SetPage PageType
-    | ReviewUpdate (Result Http.Error ReviewModel)
+    | ReviewUpdateCodeChange (Result Http.Error (List CodeChange))
     | ReviewUpdateCodeReview (Result Http.Error (List CodeReview))
-    | ReviewTeamUpdate (Result Http.Error Team)
-    | ReviewUpdateUserName String
-    | ReviewUpdateChangeUser String
+    | ReviewUpdateTeam (Result Http.Error Team)
+    | ReviewUpdateSetName String
+    | ReviewUpdateSetUser String

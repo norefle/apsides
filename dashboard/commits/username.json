@@ -1,45 +1,34 @@
 {
-    "user": {
-        "name": "username",
-        "avatar": "user.png",
-        "summary": {
-            "commits": 4,
-            "packages": 4,
-            "files": 128,
-            "lines": 1443,
-            "reviews": 4
-        }
+  "changes": [
+    {
+      "added": 1024,
+      "description": "Add support for descriptions.\n* Update model.\n* Update view.",
+      "last": 1473251216,
+      "package": "Apsides",
+      "removed": 340,
+      "url": "github/apsides"
     },
-    "changes": [
-        {
-            "package": "Apsides",
-            "url": "github/apsides",
-            "added": 1024,
-            "removed": 340,
-            "last": 1473251216,
-            "description": "Add support for descriptions.\n* Update model.\n* Update view."
-        },
-        {
-            "package": "Leser",
-            "url": "github/leser",
-            "added": 512,
-            "removed": 40,
-            "last": 1473251216,
-            "description": "Inital commit."
-        },
-        {
-            "package": "Arenero",
-            "url": "github/arenero",
-            "added": 458,
-            "removed": 546,
-            "last": 1473251216,
-            "description": "Inital commit."
-        },
-        {
-            "package": "Thermometer",
-            "url": "github/release-thermometer",
-            "removed": 140,
-            "description": "Inital commit."
-        }
-    ]
+    {
+      "added": 512,
+      "description": "Inital commit.",
+      "last": 1473251216,
+      "package": "Leser",
+      "removed": 40,
+      "url": "github/leser"
+    },
+    {
+      "added": 458,
+      "description": "Inital commit.",
+      "last": 1473251216,
+      "package": "Arenero",
+      "removed": 546,
+      "url": "github/arenero"
+    },
+    {
+      "description": "Inital commit.",
+      "package": "Thermometer",
+      "removed": 140,
+      "url": "github/release-thermometer"
+    }
+  ]
 }
