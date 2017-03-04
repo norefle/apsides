@@ -49,13 +49,13 @@ update action model =
                         Nothing ->
                             "username"
             in
-                ( { model | team = Just { users = team.users, summary = summary team.users } }, requestReview firstUserName )
+                ( { model | team = Just { users = team.users, summary = summary team.users } }, requestUser firstUserName )
 
         ReviewTeamUpdate (Err value) ->
             ( { model | pageType = Error, error = Just (toString value) }, Cmd.none )
 
         ReviewUpdate (Ok user) ->
-            ( { model | pageType = Review, reviewData = Just user }, Cmd.none )
+            ( { model | pageType = Review, reviewData = Just user }, requestReview user.user.name )
 
         ReviewUpdate (Err value) ->
             ( { model | pageType = Error, error = Just (toString value) }, Cmd.none )
@@ -64,12 +64,20 @@ update action model =
             ( { model | updates = { name = name } }, Cmd.none )
 
         ReviewUpdateChangeUser user ->
+            ( model, requestUser user )
+
+        ReviewUpdateCodeReview (Ok reviews) ->
             case model.reviewData of
                 Just data ->
-                    ( model, requestReview user )
+                    ( { model | reviewData = Just { data | reviews = reviews } }
+                    , Cmd.none
+                    )
 
                 Nothing ->
                     ( model, Cmd.none )
+
+        ReviewUpdateCodeReview (Err value) ->
+            ( { model | pageType = Error, error = Just (toString value) }, Cmd.none )
 
 
 append : UserSummary -> UserSummary -> UserSummary
@@ -92,9 +100,14 @@ requestTeam =
     Http.send ReviewTeamUpdate (Http.get "/dashboard/team.json" PageReview.fromJsonTeam)
 
 
+requestUser : String -> Cmd Action
+requestUser user =
+    Http.send ReviewUpdate (Http.get ("/dashboard/commits/" ++ user ++ ".json") PageReview.fromJsonModel)
+
+
 requestReview : String -> Cmd Action
 requestReview user =
-    Http.send ReviewUpdate (Http.get ("/dashboard/commits/" ++ user ++ ".json") PageReview.fromJsonModel)
+    Http.send ReviewUpdateCodeReview (Http.get ("/dashboard/reviews/" ++ user ++ ".json") PageReview.fromJsonReviews)
 
 
 updateReview : Action -> Model -> Model

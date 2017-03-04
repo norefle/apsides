@@ -13,6 +13,16 @@ type alias CodeChange =
     }
 
 
+type alias CodeReview =
+    { id : String
+    , url : String
+    , description : String
+    , iteration : Int
+    , approved : Int
+    , date : Int
+    }
+
+
 type alias UserSummary =
     { commits : Int
     , packages : Int
@@ -43,6 +53,7 @@ type alias Input =
 type alias ReviewModel =
     { user : User
     , changes : List CodeChange
+    , reviews : List CodeReview
     }
 
 
@@ -57,6 +68,7 @@ type Action
     = Idle
     | SetPage PageType
     | ReviewUpdate (Result Http.Error ReviewModel)
+    | ReviewUpdateCodeReview (Result Http.Error (List CodeReview))
     | ReviewTeamUpdate (Result Http.Error Team)
     | ReviewUpdateUserName String
     | ReviewUpdateChangeUser String

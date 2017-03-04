@@ -23,6 +23,7 @@ init =
             }
         }
     , changes = []
+    , reviews = []
     }
 
 
@@ -60,11 +61,29 @@ fromJsonChanges =
         |> optional "url" string ""
 
 
+fromJsonCodeReview : Decoder CodeReview
+fromJsonCodeReview =
+    decode CodeReview
+        |> required "id" string
+        |> required "url" string
+        |> required "description" string
+        |> optional "iteration" int 1
+        |> optional "approved" int 0
+        |> required "last" int
+
+
+fromJsonReviews : Decoder (List CodeReview)
+fromJsonReviews =
+    decode (identity)
+        |> required "reviews" (list fromJsonCodeReview)
+
+
 fromJsonModel : Decoder ReviewModel
 fromJsonModel =
     decode ReviewModel
         |> required "user" fromJsonUser
         |> required "changes" (list fromJsonChanges)
+        |> hardcoded []
 
 
 fromJsonTeam : Decoder Team

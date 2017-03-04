@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (attribute)
 import Models.Actions exposing (Action, ReviewModel, Team, User)
 import Views.Components.ChangeSummary as Changes
+import Views.Components.ReviewSummary as Reviews
 import Views.Components.UserSummary as UserSummary
 
 
@@ -55,12 +56,19 @@ view team model =
                             ]
                         ]
                     ]
-                ]
-            ]
-        , Html.div [ attribute "class" "row" ]
-            [ Html.div [ attribute "class" "col-md-3" ] []
-            , Html.div [ attribute "class" "col-md-9" ]
-                [ Html.div [ attribute "class" "panel panel-default" ]
+                , Html.div [ attribute "class" "panel panel-default" ]
+                    [ Html.div [ attribute "class" "panel-heading" ]
+                        [ Html.text "Code reviews "
+                        , Html.span [ attribute "class" "badge" ]
+                            [ Html.text <| toString model.user.summary.reviews ]
+                        ]
+                    , Html.div [ attribute "class" "panel-body" ]
+                        (List.map
+                            Reviews.view
+                            model.reviews
+                        )
+                    ]
+                , Html.div [ attribute "class" "panel panel-default" ]
                     [ Html.div [ attribute "class" "panel-heading" ]
                         [ Html.text "Changes "
                         , Html.span [ attribute "class" "badge" ]
