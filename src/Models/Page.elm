@@ -66,7 +66,15 @@ update action model =
             ( { model | updates = { name = name } }, Cmd.none )
 
         ReviewUpdateSetUser user ->
-            ( model, requestReviews user )
+            ( { model
+                | pageType = Review
+                , reviewData =
+                    (updateUser model.reviewData <|
+                        findUser model.team user
+                    )
+              }
+            , requestReviews user
+            )
 
         ReviewUpdateCodeReview (Ok reviews) ->
             ( { model | reviewData = PageReview.updateReviews model.reviewData reviews }
@@ -133,3 +141,31 @@ requestReviews user =
             ("/dashboard/reviews/" ++ user ++ ".json")
             PageReview.fromJsonReviews
         )
+
+
+find : List a -> (a -> Bool) -> Maybe a
+find xs predicate =
+    case xs of
+        [] ->
+            Nothing
+
+        head :: tail ->
+            if (predicate head) then
+                Just head
+            else
+                find tail predicate
+
+
+findUser : Maybe Team -> String -> Maybe User
+findUser team user =
+    Maybe.andThen (\x -> find x.users (\item -> item.name == user)) team
+
+
+updateUser : Maybe PageReview.Model -> Maybe User -> Maybe PageReview.Model
+updateUser model user =
+    case user of
+        Just userData ->
+            PageReview.updateUser model userData
+
+        Nothing ->
+            model
