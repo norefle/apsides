@@ -77,7 +77,7 @@ view team model =
                                     , td [] [ text "commits" ]
                                     , td [] [ text "packages" ]
                                     , td [] [ text "files" ]
-                                    , td [] [ text "line" ]
+                                    , td [] [ text "lines" ]
                                     ]
                                  )
                                     :: List.map (UserSummary.view team.summary) (List.indexedMap (,) (List.sortWith getCommits team.users))
