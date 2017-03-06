@@ -1,0 +1,41 @@
+{
+  "avatar": "user.png",
+  "files": [
+    {
+      "added": 12,
+      "last": {
+        "date": 1485442188,
+        "description": "Inital commit"
+      },
+      "name": "dashboard/users/username.json",
+      "package": "Apsides",
+      "removed": 0,
+      "touched": 2
+    },
+    {
+      "added": 13,
+      "last": {
+        "date": 1485442188,
+        "description": "Inital commit"
+      },
+      "name": "dashboard/users/nameofuser.json",
+      "package": "Apsides",
+      "removed": 0,
+      "touched": 1
+    }
+  ],
+  "name": "nameofuser",
+  "packages": [
+    {
+      "added": 1234,
+      "last": {
+        "date": 1480437307,
+        "description": "Inital commit"
+      },
+      "name": "Apsides",
+      "removed": 321,
+      "touched": 1,
+      "url": "norefile/apsides"
+    }
+  ]
+}

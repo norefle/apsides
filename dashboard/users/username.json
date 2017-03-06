@@ -1,0 +1,74 @@
+{
+  "avatar": "user.png",
+  "files": [
+    {
+      "added": 12,
+      "last": {
+        "date": 1485442188,
+        "description": "Inital commit"
+      },
+      "name": "dashboard/users/username.json",
+      "package": "Apsides",
+      "removed": 0,
+      "touched": 2
+    },
+    {
+      "added": 13,
+      "last": {
+        "date": 1485442188,
+        "description": "Inital commit"
+      },
+      "name": "dashboard/users/nameofuser.json",
+      "package": "Apsides",
+      "removed": 0,
+      "touched": 1
+    },
+    {
+      "added": 178,
+      "last": {
+        "date": 1485442188,
+        "description": "Added new component"
+      },
+      "name": "tst/TestData.elm",
+      "package": "Leser",
+      "removed": 0,
+      "touched": 1
+    },
+    {
+      "added": 1,
+      "last": {
+        "date": 1485442000,
+        "description": "Added new component"
+      },
+      "name": "src/Data.elm",
+      "package": "Leser",
+      "removed": 0,
+      "touched": 1
+    }
+  ],
+  "name": "username",
+  "packages": [
+    {
+      "added": 1234,
+      "last": {
+        "date": 1480437307,
+        "description": "Inital commit"
+      },
+      "name": "Apsides",
+      "removed": 321,
+      "touched": 1,
+      "url": "norefile/apsides"
+    },
+    {
+      "added": 1345,
+      "last": {
+        "date": 1480437308,
+        "description": "Inital commit"
+      },
+      "name": "Leser",
+      "removed": 31,
+      "touched": 2,
+      "url": "norefile/leser"
+    }
+  ]
+}
