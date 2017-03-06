@@ -1,6 +1,5 @@
 module Models.Page exposing (..)
 
-import Task exposing (perform)
 import Http exposing (get, send)
 import Models.Actions exposing (..)
 import Models.Review as PageReview
@@ -23,7 +22,7 @@ init =
       , error = Nothing
       , updates = { name = "" }
       }
-    , Task.perform identity (Task.succeed (SetPage Review))
+    , requestTeam
     )
 
 
@@ -56,7 +55,7 @@ update action model =
                     | team = Just { users = team.users, summary = summary team.users }
                     , reviewData = PageReview.updateUser (Just initData) firstUser
                   }
-                , requestReviews firstUser.name
+                , Cmd.none
                 )
 
         ReviewUpdateTeam (Err value) ->
@@ -73,17 +72,16 @@ update action model =
                         findUser model.team user
                     )
               }
-            , requestReviews user
+            , Cmd.batch
+                [ requestUser user
+                , requestReviews user
+                , requestChanges user
+                ]
             )
 
         ReviewUpdateCodeReview (Ok reviews) ->
             ( { model | reviewData = PageReview.updateReviews model.reviewData reviews }
-            , case model.reviewData of
-                Just data ->
-                    requestChanges data.user.name
-
-                Nothing ->
-                    Cmd.none
+            , Cmd.none
             )
 
         ReviewUpdateCodeReview (Err value) ->
@@ -95,6 +93,14 @@ update action model =
             )
 
         ReviewUpdateCodeChange (Err value) ->
+            ( setError model <| toString value, Cmd.none )
+
+        ReviewUpdateUser (Ok details) ->
+            ( { model | reviewData = PageReview.updateUserDetails model.reviewData details }
+            , Cmd.none
+            )
+
+        ReviewUpdateUser (Err value) ->
             ( setError model <| toString value, Cmd.none )
 
 
@@ -140,6 +146,16 @@ requestReviews user =
         (Http.get
             ("/dashboard/reviews/" ++ user ++ ".json")
             PageReview.fromJsonReviews
+        )
+
+
+requestUser : String -> Cmd Action
+requestUser username =
+    Http.send
+        ReviewUpdateUser
+        (Http.get
+            ("/dashboard/users/" ++ username ++ ".json")
+            PageReview.fromJsonUserDetails
         )
 
 

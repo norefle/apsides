@@ -22,6 +22,17 @@ init =
             , reviews = 0
             }
         }
+    , details =
+        { name = "username"
+        , userpic = "user.png"
+        , packages = []
+        , files = []
+        , statistics =
+            { files = 0
+            , added = 0
+            , removed = 0
+            }
+        }
     , changes = []
     , reviews = []
     }
@@ -40,6 +51,11 @@ updateUser maybe user =
 
         Nothing ->
             Nothing
+
+
+updateUserDetails : Maybe Model -> UserDetails -> Maybe Model
+updateUserDetails maybe details =
+    Maybe.andThen (\model -> Just { model | details = details }) maybe
 
 
 updateChanges : Maybe Model -> List CodeChange -> Maybe Model
@@ -118,6 +134,13 @@ fromJsonModel : Decoder ReviewModel
 fromJsonModel =
     decode ReviewModel
         |> required "user" fromJsonUser
+        |> hardcoded
+            { name = ""
+            , userpic = ""
+            , packages = []
+            , files = []
+            , statistics = { files = 0, added = 0, removed = 0 }
+            }
         |> required "changes" (list fromJsonCodeChange)
         |> hardcoded []
 
@@ -127,3 +150,45 @@ fromJsonTeam =
     decode Team
         |> required "users" (list fromJsonUser)
         |> hardcoded (UserSummary 0 0 0 0 0)
+
+
+fromJsonMedian : Decoder MedianStatistics
+fromJsonMedian =
+    decode MedianStatistics
+        |> required "files" int
+        |> required "added" int
+        |> required "removed" int
+
+
+fromJsonPackageDetails : Decoder PackageDetails
+fromJsonPackageDetails =
+    decode PackageDetails
+        |> required "name" string
+        |> required "url" string
+        |> optional "added" int 0
+        |> optional "removed" int 0
+        |> optional "touched" int 0
+        |> optional "last.date" int 0
+        |> optional "last.description" string ""
+
+
+fromJsonFileDetails : Decoder FileDetails
+fromJsonFileDetails =
+    decode FileDetails
+        |> required "name" string
+        |> required "package" string
+        |> optional "added" int 0
+        |> optional "removed" int 0
+        |> optional "touched" int 0
+        |> optional "last.date" int 0
+        |> optional "last.description" string ""
+
+
+fromJsonUserDetails : Decoder UserDetails
+fromJsonUserDetails =
+    decode UserDetails
+        |> required "name" string
+        |> required "avatar" string
+        |> required "packages" (list fromJsonPackageDetails)
+        |> required "files" (list fromJsonFileDetails)
+        |> required "median" fromJsonMedian

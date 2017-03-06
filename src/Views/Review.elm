@@ -39,15 +39,18 @@ view team model =
                             [ p [] [ text "Statistics (mean values per change)" ]
                             , ul [ attribute "class" "list-group" ]
                                 [ li [ attribute "class" "list-group-item" ]
-                                    [ span [ attribute "class" "badge" ] [ text "2" ]
+                                    [ span [ attribute "class" "badge" ]
+                                        [ text <| toString model.details.statistics.files ]
                                     , text "Files"
                                     ]
                                 , li [ attribute "class" "list-group-item" ]
-                                    [ span [ attribute "class" "badge" ] [ text "20" ]
+                                    [ span [ attribute "class" "badge" ]
+                                        [ text <| toString model.details.statistics.added ]
                                     , text "Added lines"
                                     ]
                                 , li [ attribute "class" "list-group-item" ]
-                                    [ span [ attribute "class" "badge" ] [ text "2" ]
+                                    [ span [ attribute "class" "badge" ]
+                                        [ text <| toString model.details.statistics.removed ]
                                     , text "Removed lines"
                                     ]
                                 ]

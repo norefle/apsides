@@ -39,6 +39,44 @@ type alias User =
     }
 
 
+type alias MedianStatistics =
+    { files : Int
+    , added : Int
+    , removed : Int
+    }
+
+
+type alias PackageDetails =
+    { name : String
+    , url : String
+    , added : Int
+    , removed : Int
+    , touched : Int
+    , date : Int
+    , description : String
+    }
+
+
+type alias FileDetails =
+    { name : String
+    , package : String
+    , added : Int
+    , removed : Int
+    , touched : Int
+    , date : Int
+    , description : String
+    }
+
+
+type alias UserDetails =
+    { name : String
+    , userpic : String
+    , packages : List PackageDetails
+    , files : List FileDetails
+    , statistics : MedianStatistics
+    }
+
+
 type alias Team =
     { users : List User
     , summary : UserSummary
@@ -52,6 +90,7 @@ type alias Input =
 
 type alias ReviewModel =
     { user : User
+    , details : UserDetails
     , changes : List CodeChange
     , reviews : List CodeReview
     }
@@ -69,6 +108,7 @@ type Action
     | SetPage PageType
     | ReviewUpdateCodeChange (Result Http.Error (List CodeChange))
     | ReviewUpdateCodeReview (Result Http.Error (List CodeReview))
+    | ReviewUpdateUser (Result Http.Error UserDetails)
     | ReviewUpdateTeam (Result Http.Error Team)
     | ReviewUpdateSetName String
     | ReviewUpdateSetUser String
