@@ -24,6 +24,11 @@
       "touched": 1
     }
   ],
+  "median": {
+    "added": 3,
+    "files": 1,
+    "removed": 2
+  },
   "name": "nameofuser",
   "packages": [
     {
