@@ -39,7 +39,7 @@ type alias User =
     }
 
 
-type alias MedianStatistics =
+type alias Statistics =
     { files : Int
     , added : Int
     , removed : Int
@@ -73,7 +73,10 @@ type alias UserDetails =
     , userpic : String
     , packages : List PackageDetails
     , files : List FileDetails
-    , statistics : MedianStatistics
+    , max : Statistics
+    , min : Statistics
+    , median : Statistics
+    , average : Statistics
     }
 
 

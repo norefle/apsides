@@ -24,11 +24,6 @@
       "touched": 1
     }
   ],
-  "median": {
-    "added": 3,
-    "files": 1,
-    "removed": 2
-  },
   "name": "nameofuser",
   "packages": [
     {
@@ -42,5 +37,27 @@
       "touched": 1,
       "url": "norefile/apsides"
     }
-  ]
+  ],
+  "statistics": {
+    "average": {
+      "added": 10,
+      "files": 4,
+      "removed": 5
+    },
+    "max": {
+      "added": 20,
+      "files": 6,
+      "removed": 10
+    },
+    "median": {
+      "added": 12,
+      "files": 3,
+      "removed": 6
+    },
+    "min": {
+      "added": 1,
+      "files": 1,
+      "removed": 1
+    }
+  }
 }

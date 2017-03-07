@@ -1,6 +1,6 @@
 module Models.Review exposing (..)
 
-import Json.Decode exposing (Decoder, string, int, list)
+import Json.Decode exposing (Decoder, string, int, list, field)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Models.Actions exposing (..)
 
@@ -27,11 +27,10 @@ init =
         , userpic = "user.png"
         , packages = []
         , files = []
-        , statistics =
-            { files = 0
-            , added = 0
-            , removed = 0
-            }
+        , max = { files = 0, added = 0, removed = 0 }
+        , min = { files = 0, added = 0, removed = 0 }
+        , median = { files = 0, added = 0, removed = 0 }
+        , average = { files = 0, added = 0, removed = 0 }
         }
     , changes = []
     , reviews = []
@@ -139,7 +138,10 @@ fromJsonModel =
             , userpic = ""
             , packages = []
             , files = []
-            , statistics = { files = 0, added = 0, removed = 0 }
+            , max = { files = 0, added = 0, removed = 0 }
+            , min = { files = 0, added = 0, removed = 0 }
+            , median = { files = 0, added = 0, removed = 0 }
+            , average = { files = 0, added = 0, removed = 0 }
             }
         |> required "changes" (list fromJsonCodeChange)
         |> hardcoded []
@@ -152,9 +154,14 @@ fromJsonTeam =
         |> hardcoded (UserSummary 0 0 0 0 0)
 
 
-fromJsonMedian : Decoder MedianStatistics
-fromJsonMedian =
-    decode MedianStatistics
+fromJsonStatisticsNamed : String -> Decoder Statistics
+fromJsonStatisticsNamed name =
+    field name fromJsonStatistics
+
+
+fromJsonStatistics : Decoder Statistics
+fromJsonStatistics =
+    decode Statistics
         |> required "files" int
         |> required "added" int
         |> required "removed" int
@@ -191,4 +198,7 @@ fromJsonUserDetails =
         |> required "avatar" string
         |> required "packages" (list fromJsonPackageDetails)
         |> required "files" (list fromJsonFileDetails)
-        |> required "median" fromJsonMedian
+        |> required "statistics" (fromJsonStatisticsNamed "max")
+        |> required "statistics" (fromJsonStatisticsNamed "min")
+        |> required "statistics" (fromJsonStatisticsNamed "median")
+        |> required "statistics" (fromJsonStatisticsNamed "average")

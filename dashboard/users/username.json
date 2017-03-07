@@ -46,11 +46,6 @@
       "touched": 1
     }
   ],
-  "median": {
-    "added": 66,
-    "files": 5,
-    "removed": 2
-  },
   "name": "username",
   "packages": [
     {
@@ -75,5 +70,27 @@
       "touched": 2,
       "url": "norefile/leser"
     }
-  ]
+  ],
+  "statistics": {
+    "average": {
+      "added": 100,
+      "files": 4,
+      "removed": 50
+    },
+    "max": {
+      "added": 200,
+      "files": 6,
+      "removed": 100
+    },
+    "median": {
+      "added": 120,
+      "files": 3,
+      "removed": 60
+    },
+    "min": {
+      "added": 1,
+      "files": 1,
+      "removed": 1
+    }
+  }
 }
