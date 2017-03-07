@@ -28,7 +28,7 @@ view team model =
                                             , a [ attribute "href" x.url ] [ text x.name ]
                                             ]
                                     )
-                                    (List.take 10 model.details.packages)
+                                    (List.sortWith (\left right -> compare left.touched right.touched |> invert) model.details.packages |> List.take 10)
                                 )
                             ]
                         , div [ attribute "class" "row text-left" ]
@@ -119,9 +119,9 @@ view team model =
         ]
 
 
-getCommits : User -> User -> Order
-getCommits left right =
-    case compare left.summary.commits right.summary.commits of
+invert : Order -> Order
+invert order =
+    case order of
         LT ->
             GT
 
@@ -130,3 +130,8 @@ getCommits left right =
 
         GT ->
             LT
+
+
+getCommits : User -> User -> Order
+getCommits left right =
+    compare left.summary.commits right.summary.commits |> invert
