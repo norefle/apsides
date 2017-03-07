@@ -3,6 +3,7 @@ module Models.Page exposing (..)
 import Http exposing (get, send)
 import Models.Actions exposing (..)
 import Models.Review as PageReview
+import Ports
 
 
 type alias Model =
@@ -35,8 +36,13 @@ update action model =
         SetPage page ->
             ( setError model "Not found", Cmd.none )
 
-        Idle ->
-            ( model, Cmd.none )
+        TimeUpdate _ ->
+            case model.reviewData of
+                Just data ->
+                    ( model, requestUserAll data.user.name )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         ReviewUpdateTeam (Ok team) ->
             let
@@ -50,15 +56,17 @@ update action model =
 
                         Nothing ->
                             initData.user
+
+                ( reviewData, changed ) =
+                    PageReview.updateUser (Just initData) firstUser
             in
                 ( { model
                     | team = Just { users = team.users, summary = summary team.users }
-                    , reviewData = PageReview.updateUser (Just initData) firstUser
+                    , reviewData = reviewData
                   }
                 , Cmd.batch
-                    [ requestUser firstUser.name
-                    , requestReviews firstUser.name
-                    , requestChanges firstUser.name
+                    [ requestUserAll firstUser.name
+                    , Ports.hasUpdates changed
                     ]
                 )
 
@@ -69,40 +77,52 @@ update action model =
             ( { model | updates = { name = name } }, Cmd.none )
 
         ReviewUpdateSetUser user ->
-            ( { model
-                | pageType = Review
-                , reviewData =
-                    (updateUser model.reviewData <|
-                        findUser model.team user
-                    )
-              }
-            , Cmd.batch
-                [ requestUser user
-                , requestReviews user
-                , requestChanges user
-                ]
-            )
+            let
+                ( reviewData, changed ) =
+                    updateUser model.reviewData (findUser model.team user)
+            in
+                ( { model
+                    | pageType = Review
+                    , reviewData = reviewData
+                  }
+                , Cmd.batch
+                    [ requestUserAll user
+                    , Ports.hasUpdates changed
+                    ]
+                )
 
         ReviewUpdateCodeReview (Ok reviews) ->
-            ( { model | reviewData = PageReview.updateReviews model.reviewData reviews }
-            , Cmd.none
-            )
+            let
+                ( reviewData, changed ) =
+                    PageReview.updateReviews model.reviewData reviews
+            in
+                ( { model | reviewData = reviewData }
+                , Ports.hasUpdates changed
+                )
 
         ReviewUpdateCodeReview (Err value) ->
             ( setError model <| toString value, Cmd.none )
 
         ReviewUpdateCodeChange (Ok changes) ->
-            ( { model | reviewData = PageReview.updateChanges model.reviewData changes }
-            , Cmd.none
-            )
+            let
+                ( reviewData, changed ) =
+                    PageReview.updateChanges model.reviewData changes
+            in
+                ( { model | reviewData = reviewData }
+                , Ports.hasUpdates changed
+                )
 
         ReviewUpdateCodeChange (Err value) ->
             ( setError model <| toString value, Cmd.none )
 
         ReviewUpdateUser (Ok details) ->
-            ( { model | reviewData = PageReview.updateUserDetails model.reviewData details }
-            , Cmd.none
-            )
+            let
+                ( reviewData, changed ) =
+                    PageReview.updateUserDetails model.reviewData details
+            in
+                ( { model | reviewData = reviewData }
+                , Ports.hasUpdates changed
+                )
 
         ReviewUpdateUser (Err value) ->
             ( setError model <| toString value, Cmd.none )
@@ -163,6 +183,15 @@ requestUser username =
         )
 
 
+requestUserAll : String -> Cmd Action
+requestUserAll username =
+    Cmd.batch
+        [ requestUser username
+        , requestChanges username
+        , requestReviews username
+        ]
+
+
 find : List a -> (a -> Bool) -> Maybe a
 find xs predicate =
     case xs of
@@ -181,11 +210,11 @@ findUser team user =
     Maybe.andThen (\x -> find x.users (\item -> item.name == user)) team
 
 
-updateUser : Maybe PageReview.Model -> Maybe User -> Maybe PageReview.Model
+updateUser : Maybe PageReview.Model -> Maybe User -> ( Maybe PageReview.Model, Bool )
 updateUser model user =
     case user of
         Just userData ->
             PageReview.updateUser model userData
 
         Nothing ->
-            model
+            ( model, False )

@@ -1,6 +1,7 @@
 module Models.Actions exposing (..)
 
 import Http exposing (Error)
+import Time exposing (Time)
 
 
 type alias CodeChange =
@@ -107,7 +108,7 @@ type PageType
 
 
 type Action
-    = Idle
+    = TimeUpdate Time
     | SetPage PageType
     | ReviewUpdateCodeChange (Result Http.Error (List CodeChange))
     | ReviewUpdateCodeReview (Result Http.Error (List CodeReview))

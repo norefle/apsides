@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="styles/theme.min.css">
 </head>
 <body>
-    <script>var app = Elm.Main.fullscreen();</script>
+    <script>
+        var baseTitle = "Apsides - yet another team dashboard."
+        var app = Elm.Main.fullscreen();
+        app.ports.hasUpdates.subscribe(function(hasUpdates) {
+            if (document.hasFocus() && !hasUpdates) {
+                document.title = baseTitle;
+            } else if (!document.hasFocus() && hasUpdates) {
+                document.title = "* " + baseTitle;
+            }
+        });
+    </script>
 </body>
 </html>

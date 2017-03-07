@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Models.Actions exposing (Action)
 import Models.Page as PageModel
 import Views.Page as PageView
+import Time exposing (Time)
 
 
 type alias Model =
@@ -36,7 +37,7 @@ view model =
 
 subscriptions : Model -> Sub Action
 subscriptions model =
-    Sub.none
+    Time.every (15 * Time.minute) Models.Actions.TimeUpdate
 
 
 main : Program Never Model Action

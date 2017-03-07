@@ -42,39 +42,34 @@ update action model =
     model
 
 
-updateUser : Maybe Model -> User -> Maybe Model
+updateModel : (a -> b -> a) -> (a -> b -> Bool) -> Maybe a -> b -> ( Maybe a, Bool )
+updateModel apply check source newData =
+    case source of
+        Just sourceData ->
+            ( apply sourceData newData |> Just, check sourceData newData )
+
+        Nothing ->
+            ( Nothing, False )
+
+
+updateUser : Maybe Model -> User -> ( Maybe Model, Bool )
 updateUser maybe user =
-    case maybe of
-        Just model ->
-            Just { model | user = user }
-
-        Nothing ->
-            Nothing
+    updateModel (\x y -> { x | user = y }) (\x y -> x.user /= y) maybe user
 
 
-updateUserDetails : Maybe Model -> UserDetails -> Maybe Model
+updateUserDetails : Maybe Model -> UserDetails -> ( Maybe Model, Bool )
 updateUserDetails maybe details =
-    Maybe.andThen (\model -> Just { model | details = details }) maybe
+    updateModel (\x y -> { x | details = y }) (\x y -> x.details /= y) maybe details
 
 
-updateChanges : Maybe Model -> List CodeChange -> Maybe Model
+updateChanges : Maybe Model -> List CodeChange -> ( Maybe Model, Bool )
 updateChanges maybe changes =
-    case maybe of
-        Just model ->
-            Just { model | changes = changes }
-
-        Nothing ->
-            Nothing
+    updateModel (\x y -> { x | changes = y }) (\x y -> x.changes /= y) maybe changes
 
 
-updateReviews : Maybe Model -> List CodeReview -> Maybe Model
+updateReviews : Maybe Model -> List CodeReview -> ( Maybe Model, Bool )
 updateReviews maybe reviews =
-    case maybe of
-        Just model ->
-            Just { model | reviews = reviews }
-
-        Nothing ->
-            Nothing
+    updateModel (\x y -> { x | reviews = y }) (\x y -> x.reviews /= y) maybe reviews
 
 
 fromJsonUserSummary : Decoder UserSummary
