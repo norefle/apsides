@@ -55,7 +55,7 @@ update action model =
                     | team = Just { users = team.users, summary = summary team.users }
                     , reviewData = PageReview.updateUser (Just initData) firstUser
                   }
-                , Cmd.none
+                , requestUser firstUser.name
                 )
 
         ReviewUpdateTeam (Err value) ->
