@@ -25,18 +25,12 @@ type alias CodeReview =
 
 
 type alias UserSummary =
-    { commits : Int
+    { name : String
+    , commits : Int
     , packages : Int
     , files : Int
     , lines : Int
     , reviews : Int
-    }
-
-
-type alias User =
-    { name : String
-    , userpic : String
-    , summary : UserSummary
     }
 
 
@@ -82,19 +76,15 @@ type alias UserDetails =
 
 
 type alias Team =
-    { users : List User
-    , summary : UserSummary
-    }
+    { users : List UserSummary }
 
 
 type alias Input =
-    { name : String
-    }
+    { name : String }
 
 
 type alias ReviewModel =
-    { user : User
-    , details : UserDetails
+    { user : UserDetails
     , changes : List CodeChange
     , reviews : List CodeReview
     }

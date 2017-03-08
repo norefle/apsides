@@ -14,17 +14,6 @@ init =
     { user =
         { name = "username"
         , userpic = "user.png"
-        , summary =
-            { commits = 0
-            , packages = 0
-            , files = 0
-            , lines = 0
-            , reviews = 0
-            }
-        }
-    , details =
-        { name = "username"
-        , userpic = "user.png"
         , packages = []
         , files = []
         , max = { files = 0, added = 0, removed = 0 }
@@ -42,24 +31,24 @@ update action model =
     model
 
 
-updateModel : (a -> b -> a) -> (a -> b -> Bool) -> Maybe a -> b -> ( Maybe a, Bool )
+updateModel : (Model -> b -> Model) -> (Model -> b -> Bool) -> Maybe Model -> b -> ( Maybe Model, Bool )
 updateModel apply check source newData =
     case source of
         Just sourceData ->
             ( apply sourceData newData |> Just, check sourceData newData )
 
         Nothing ->
-            ( Nothing, False )
+            ( apply init newData |> Just, True )
 
 
-updateUser : Maybe Model -> User -> ( Maybe Model, Bool )
+updateUser : Maybe Model -> UserDetails -> ( Maybe Model, Bool )
 updateUser maybe user =
     updateModel (\x y -> { x | user = y }) (\x y -> x.user /= y) maybe user
 
 
 updateUserDetails : Maybe Model -> UserDetails -> ( Maybe Model, Bool )
-updateUserDetails maybe details =
-    updateModel (\x y -> { x | details = y }) (\x y -> x.details /= y) maybe details
+updateUserDetails maybe user =
+    updateModel (\x y -> { x | user = y }) (\x y -> x.user /= y) maybe user
 
 
 updateChanges : Maybe Model -> List CodeChange -> ( Maybe Model, Bool )
@@ -75,19 +64,12 @@ updateReviews maybe reviews =
 fromJsonUserSummary : Decoder UserSummary
 fromJsonUserSummary =
     decode UserSummary
+        |> required "name" string
         |> optional "commits" int 0
         |> optional "packages" int 0
         |> optional "files" int 0
         |> optional "lines" int 0
         |> optional "reviews" int 0
-
-
-fromJsonUser : Decoder User
-fromJsonUser =
-    decode User
-        |> required "name" string
-        |> required "avatar" string
-        |> required "summary" fromJsonUserSummary
 
 
 fromJsonCodeChange : Decoder CodeChange
@@ -124,29 +106,10 @@ fromJsonReviews =
         |> required "reviews" (list fromJsonCodeReview)
 
 
-fromJsonModel : Decoder ReviewModel
-fromJsonModel =
-    decode ReviewModel
-        |> required "user" fromJsonUser
-        |> hardcoded
-            { name = ""
-            , userpic = ""
-            , packages = []
-            , files = []
-            , max = { files = 0, added = 0, removed = 0 }
-            , min = { files = 0, added = 0, removed = 0 }
-            , median = { files = 0, added = 0, removed = 0 }
-            , average = { files = 0, added = 0, removed = 0 }
-            }
-        |> required "changes" (list fromJsonCodeChange)
-        |> hardcoded []
-
-
 fromJsonTeam : Decoder Team
 fromJsonTeam =
     decode Team
-        |> required "users" (list fromJsonUser)
-        |> hardcoded (UserSummary 0 0 0 0 0)
+        |> required "users" (list fromJsonUserSummary)
 
 
 fromJsonStatisticsNamed : String -> Decoder Statistics

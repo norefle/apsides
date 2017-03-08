@@ -52,22 +52,13 @@ update action model =
                 firstUser =
                     case List.head team.users of
                         Just user ->
-                            user
+                            user.name
 
                         Nothing ->
-                            initData.user
-
-                ( reviewData, changed ) =
-                    PageReview.updateUser (Just initData) firstUser
+                            initData.user.name
             in
-                ( { model
-                    | team = Just { users = team.users, summary = summary team.users }
-                    , reviewData = reviewData
-                  }
-                , Cmd.batch
-                    [ requestUserAll firstUser.name
-                    , Ports.hasUpdates changed
-                    ]
+                ( { model | team = Just { users = team.users } }
+                , requestUserAll firstUser
                 )
 
         ReviewUpdateTeam (Err value) ->
@@ -77,19 +68,7 @@ update action model =
             ( { model | updates = { name = name } }, Cmd.none )
 
         ReviewUpdateSetUser user ->
-            let
-                ( reviewData, changed ) =
-                    updateUser model.reviewData (findUser model.team user)
-            in
-                ( { model
-                    | pageType = Review
-                    , reviewData = reviewData
-                  }
-                , Cmd.batch
-                    [ requestUserAll user
-                    , Ports.hasUpdates changed
-                    ]
-                )
+            ( model, requestUserAll user )
 
         ReviewUpdateCodeReview (Ok reviews) ->
             let
@@ -131,21 +110,6 @@ update action model =
 setError : Model -> String -> Model
 setError model error =
     { model | pageType = Error, error = Just error }
-
-
-append : UserSummary -> UserSummary -> UserSummary
-append left right =
-    { commits = left.commits + right.commits
-    , packages = left.packages + right.packages
-    , files = left.files + right.files
-    , lines = left.lines + right.lines
-    , reviews = left.reviews + right.reviews
-    }
-
-
-summary : List User -> UserSummary
-summary users =
-    List.map (\user -> user.summary) users |> List.foldl append (UserSummary 0 0 0 0 0)
 
 
 requestTeam : Cmd Action
@@ -205,12 +169,12 @@ find xs predicate =
                 find tail predicate
 
 
-findUser : Maybe Team -> String -> Maybe User
-findUser team user =
-    Maybe.andThen (\x -> find x.users (\item -> item.name == user)) team
+findUser : Maybe Team -> String -> Maybe UserSummary
+findUser team username =
+    Maybe.andThen (\x -> find x.users (\item -> item.name == username)) team
 
 
-updateUser : Maybe PageReview.Model -> Maybe User -> ( Maybe PageReview.Model, Bool )
+updateUser : Maybe PageReview.Model -> Maybe UserDetails -> ( Maybe PageReview.Model, Bool )
 updateUser model user =
     case user of
         Just userData ->

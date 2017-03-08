@@ -2,7 +2,7 @@ module Views.Review exposing (..)
 
 import Html exposing (Html, div, img, text, col, td, span, tbody, tr, table, colgroup, ul, li, p, a)
 import Html.Attributes exposing (attribute)
-import Models.Actions exposing (Action, ReviewModel, Team, User)
+import Models.Actions exposing (Action, ReviewModel, Team, UserSummary)
 import Views.Components.ChangeSummary as Changes
 import Views.Components.ReviewSummary as Reviews
 import Views.Components.UserSummary as UserSummary
@@ -28,31 +28,31 @@ view team model =
                                             , a [ attribute "href" x.url ] [ text x.name ]
                                             ]
                                     )
-                                    (List.sortWith (\left right -> compare left.touched right.touched |> invert) model.details.packages |> List.take 10)
+                                    (List.sortWith (\left right -> compare left.touched right.touched |> invert) model.user.packages |> List.take 10)
                                 )
                             ]
                         , div [ attribute "class" "row text-left" ]
                             [ p [] [ text "Statistics (min | average | median | max)" ]
                             , ul [ attribute "class" "list-group" ]
                                 [ li [ attribute "class" "list-group-item" ]
-                                    [ span [ attribute "class" "badge" ] [ text <| toString model.details.max.files ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.median.files ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.average.files ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.min.files ]
+                                    [ span [ attribute "class" "badge" ] [ text <| toString model.user.max.files ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.median.files ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.average.files ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.min.files ]
                                     , text "Files"
                                     ]
                                 , li [ attribute "class" "list-group-item" ]
-                                    [ span [ attribute "class" "badge" ] [ text <| toString model.details.max.added ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.median.added ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.average.added ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.min.added ]
+                                    [ span [ attribute "class" "badge" ] [ text <| toString model.user.max.added ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.median.added ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.average.added ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.min.added ]
                                     , text "Added lines"
                                     ]
                                 , li [ attribute "class" "list-group-item" ]
-                                    [ span [ attribute "class" "badge" ] [ text <| toString model.details.max.removed ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.median.removed ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.average.removed ]
-                                    , span [ attribute "class" "badge" ] [ text <| toString model.details.min.removed ]
+                                    [ span [ attribute "class" "badge" ] [ text <| toString model.user.max.removed ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.median.removed ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.average.removed ]
+                                    , span [ attribute "class" "badge" ] [ text <| toString model.user.min.removed ]
                                     , text "Removed lines"
                                     ]
                                 ]
@@ -85,7 +85,7 @@ view team model =
                                     , td [] [ text "lines" ]
                                     ]
                                  )
-                                    :: List.map (UserSummary.view team.summary) (List.indexedMap (,) (List.sortWith getCommits team.users))
+                                    :: List.map UserSummary.view (List.indexedMap (,) (List.sortWith getCommits team.users))
                                 )
                             ]
                         ]
@@ -94,7 +94,7 @@ view team model =
                     [ div [ attribute "class" "panel-heading" ]
                         [ text "Code reviews "
                         , span [ attribute "class" "badge" ]
-                            [ text <| toString model.user.summary.reviews ]
+                            [ text <| toString <| List.length model.reviews ]
                         ]
                     , div [ attribute "class" "panel-body" ]
                         (List.map
@@ -132,6 +132,6 @@ invert order =
             LT
 
 
-getCommits : User -> User -> Order
+getCommits : UserSummary -> UserSummary -> Order
 getCommits left right =
-    compare left.summary.commits right.summary.commits |> invert
+    compare left.commits right.commits |> invert
