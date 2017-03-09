@@ -17,7 +17,7 @@ view team model =
                     [ div [ attribute "class" "panel-heading" ] [ text model.user.name ]
                     , div [ attribute "class" "panel-body" ]
                         [ div [ attribute "class" "row" ]
-                            [ img [ attribute "src" ("img/" ++ model.user.userpic) ] [] ]
+                            [ img [ attribute "src" model.user.userpic ] [] ]
                         , div [ attribute "class" "row text-left" ]
                             [ p [] [ text "Top 10 packages (number of changes)" ]
                             , ul [ attribute "class" "list-group" ]
