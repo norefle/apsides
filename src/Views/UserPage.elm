@@ -18,7 +18,7 @@ view model =
             [ div [ class "col-md-3 text-center" ]
                 [ profile model.user ]
             , div [ class "col-md-9" ]
-                [ reviews model.reviews
+                [ reviews model.user.name model.reviews
                 , commits model.commits
                 ]
             ]
@@ -78,9 +78,9 @@ statisticsItem name user getValue =
         ]
 
 
-reviews : List Code.Review -> Html UserPage.Action
-reviews list =
-    summaryList "Reviews" Review.view list
+reviews : String -> List Code.Review -> Html UserPage.Action
+reviews username list =
+    summaryList "Reviews" (Review.view username) list
         |> Html.map translate
 
 

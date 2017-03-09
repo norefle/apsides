@@ -94,7 +94,7 @@ update action model =
                 teamModel =
                     Maybe.withDefault TeamPage.init model.teamPage
 
-                ( newModel, changed ) =
+                ( newModel, changed, action ) =
                     TeamPage.update teamAction teamModel
 
                 ( pageType, error ) =
@@ -110,7 +110,10 @@ update action model =
                     , pageType = pageType
                     , error = error
                   }
-                , Ports.hasUpdates changed
+                , Cmd.batch
+                    [ Ports.hasUpdates changed
+                    , Cmd.map TeamAction action
+                    ]
                 )
 
         UserAction userAction ->
