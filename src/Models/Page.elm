@@ -87,7 +87,19 @@ update action model =
             ( { model | input = input }, Cmd.none )
 
         TimeUpdate _ ->
-            ( setError model "Not found", Cmd.none )
+            let
+                action =
+                    case ( model.pageType, model.userPage, model.teamPage ) of
+                        ( User, Just data, _ ) ->
+                            UserPage.requestUserAll data.user.name |> Cmd.map UserAction
+
+                        ( Team, _, Just data ) ->
+                            TeamPage.requestTeam |> Cmd.map TeamAction
+
+                        _ ->
+                            Cmd.none
+            in
+                ( model, action )
 
         TeamAction teamAction ->
             let
