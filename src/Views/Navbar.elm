@@ -1,38 +1,36 @@
 module Views.Navbar exposing (..)
 
-import Html exposing (Html)
-import Html.Attributes exposing (attribute)
+import Html exposing (..)
+import Html.Attributes exposing (class, type_, href, placeholder)
 import Html.Events exposing (onClick, onInput)
-import Models.Page exposing (Model)
-import Models.Actions as A
+import Models.Page as Page
 
 
-view : Model -> Html A.Action
+view : Page.Model -> Html Page.Action
 view model =
-    Html.node "nav"
-        [ attribute "class" "navbar navbar-inverse" ]
-        [ Html.div [ attribute "class" "container-fluid" ]
-            [ Html.ul [ attribute "class" "nav navbar-nav" ]
-                [ Html.li [] [ Html.a [ onClick (A.SetPage A.Review) ] [ Html.text "Review" ] ]
-                , Html.li [] [ Html.a [ onClick (A.SetPage A.Retrospective) ] [ Html.text "Retrospective" ] ]
-                , Html.li [] [ Html.a [ onClick (A.SetPage A.Planning) ] [ Html.text "Planning" ] ]
+    nav
+        [ class "navbar navbar-inverse" ]
+        [ div [ class "container-fluid" ]
+            [ ul [ class "nav navbar-nav" ]
+                [ li [] [ a [ onClick (Page.SetPage Page.Team) ] [ text "Dashboard" ] ]
+                , li [] [ a [ onClick (Page.SetPage Page.User) ] [ text "User" ] ]
                 ]
-            , Html.ul [ attribute "class" "nav navbar-nav navbar-right from-group" ]
-                [ Html.li []
-                    [ Html.input
-                        [ attribute "type" "text"
-                        , attribute "placeholder" "username"
-                        , attribute "class" "form-control"
-                        , onInput A.ReviewUpdateSetName
+            , ul [ class "nav navbar-nav navbar-right from-group" ]
+                [ li []
+                    [ input
+                        [ type_ "text"
+                        , placeholder "username"
+                        , class "form-control"
+                        , onInput Page.SetInput
                         ]
                         []
                     ]
-                , Html.li []
-                    [ Html.button
-                        [ attribute "class" "btn btn-default"
-                        , onClick (A.ReviewUpdateSetUser model.updates.name)
+                , li []
+                    [ button
+                        [ class "btn btn-default"
+                        , onClick (Page.SetUser model.input)
                         ]
-                        [ Html.text "Go" ]
+                        [ text "Go" ]
                     ]
                 ]
             ]

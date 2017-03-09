@@ -1,46 +1,49 @@
 module Views.Page exposing (..)
 
-import Html exposing (Html)
-import Models.Actions as A
-import Models.Page exposing (Model)
+import Html exposing (..)
+import Models.Page as Page
 import Views.Navbar as Navbar
-import Views.Review as ReviewPage
-import Views.Error as ErrorPage
+import Views.UserPage as UserPage
+import Views.TeamPage as TeamPage
+import Views.ErrorPage as ErrorPage
 
 
-view : Model -> Html A.Action
+view : Page.Model -> Html Page.Action
 view model =
-    Html.div []
+    div []
         [ Navbar.view model
-        , showPage model.pageType model.team model.reviewData model.error
+        , showPage model
         ]
 
 
-showPage : A.PageType -> Maybe A.Team -> Maybe A.ReviewModel -> Maybe b -> Html A.Action
-showPage page team model error =
-    case page of
-        A.Review ->
-            case model of
+showPage : Page.Model -> Html Page.Action
+showPage model =
+    case model.pageType of
+        Page.User ->
+            case model.userPage of
                 Just data ->
-                    case team of
-                        Just teamData ->
-                            ReviewPage.view teamData data
+                    UserPage.view data |> Html.map Page.fromUserAction
 
-                        Nothing ->
-                            showEmptyPage
+                Nothing ->
+                    showEmptyPage
+
+        Page.Team ->
+            case model.teamPage of
+                Just data ->
+                    TeamPage.view data |> Html.map Page.fromTeamAction
 
                 Nothing ->
                     showEmptyPage
 
         _ ->
-            showErrorPage error
+            showErrorPage model.error
 
 
-showEmptyPage : Html A.Action
+showEmptyPage : Html Page.Action
 showEmptyPage =
     Html.div [] []
 
 
-showErrorPage : Maybe a -> Html A.Action
+showErrorPage : Maybe a -> Html Page.Action
 showErrorPage error =
-    ErrorPage.view error
+    ErrorPage.view error |> Html.map Page.fromErrorAction

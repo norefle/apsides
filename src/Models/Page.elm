@@ -1,184 +1,143 @@
 module Models.Page exposing (..)
 
-import Http exposing (get, send)
-import Models.Actions exposing (..)
-import Models.Review as PageReview
+import Time exposing (Time)
+import Models.UserPage as UserPage
+import Models.TeamPage as TeamPage
 import Ports
+
+
+type PageType
+    = Team
+    | User
+    | Error
+
+
+type Action
+    = None
+    | SetPage PageType
+    | SetUser String
+    | SetInput String
+    | TimeUpdate Time
+    | TeamAction TeamPage.Action
+    | UserAction UserPage.Action
 
 
 type alias Model =
     { pageType : PageType
-    , team : Maybe Team
-    , reviewData : Maybe PageReview.Model
+    , teamPage : Maybe TeamPage.Model
+    , userPage : Maybe UserPage.Model
     , error : Maybe String
-    , updates : Input
+    , input : String
     }
+
+
+fromUserAction : UserPage.Action -> Action
+fromUserAction userAction =
+    UserAction userAction
+
+
+fromTeamAction : TeamPage.Action -> Action
+fromTeamAction teamAction =
+    case teamAction of
+        TeamPage.SetUser username ->
+            SetUser username
+
+        _ ->
+            TeamAction teamAction
+
+
+fromErrorAction : () -> Action
+fromErrorAction _ =
+    None
 
 
 init : ( Model, Cmd Action )
 init =
-    ( { pageType = Review
-      , team = Nothing
-      , reviewData = Nothing
+    ( { pageType = Team
+      , teamPage = Nothing
+      , userPage = Nothing
       , error = Nothing
-      , updates = { name = "" }
+      , input = ""
       }
-    , requestTeam
+    , Cmd.map TeamAction TeamPage.requestTeam
     )
 
 
 update : Action -> Model -> ( Model, Cmd Action )
 update action model =
     case action of
-        SetPage Review ->
-            ( { model | pageType = Review }, requestTeam )
+        None ->
+            ( model, Cmd.none )
 
-        SetPage page ->
+        SetPage User ->
+            ( { model | pageType = User }, Cmd.none )
+
+        SetPage Team ->
+            ( { model | pageType = Team }, Cmd.none )
+
+        SetPage Error ->
             ( setError model "Not found", Cmd.none )
 
+        SetUser name ->
+            ( { model | pageType = User }
+            , UserPage.requestUserAll name |> Cmd.map UserAction
+            )
+
+        SetInput input ->
+            ( { model | input = input }, Cmd.none )
+
         TimeUpdate _ ->
-            case model.reviewData of
-                Just data ->
-                    ( model, requestUserAll data.user.name )
+            ( setError model "Not found", Cmd.none )
 
-                Nothing ->
-                    ( model, Cmd.none )
-
-        ReviewUpdateTeam (Ok team) ->
+        TeamAction teamAction ->
             let
-                initData =
-                    PageReview.init
+                teamModel =
+                    Maybe.withDefault TeamPage.init model.teamPage
 
-                firstUser =
-                    case List.head team.users of
-                        Just user ->
-                            user.name
+                ( newModel, changed ) =
+                    TeamPage.update teamAction teamModel
+
+                ( pageType, error ) =
+                    case newModel.error of
+                        Just _ ->
+                            ( Error, newModel.error )
 
                         Nothing ->
-                            initData.user.name
+                            ( Team, Nothing )
             in
-                ( { model | team = Just { users = team.users } }
-                , requestUserAll firstUser
-                )
-
-        ReviewUpdateTeam (Err value) ->
-            ( setError model <| toString value, Cmd.none )
-
-        ReviewUpdateSetName name ->
-            ( { model | updates = { name = name } }, Cmd.none )
-
-        ReviewUpdateSetUser user ->
-            ( model, requestUserAll user )
-
-        ReviewUpdateCodeReview (Ok reviews) ->
-            let
-                ( reviewData, changed ) =
-                    PageReview.updateReviews model.reviewData reviews
-            in
-                ( { model | reviewData = reviewData }
+                ( { model
+                    | teamPage = Just newModel
+                    , pageType = pageType
+                    , error = error
+                  }
                 , Ports.hasUpdates changed
                 )
 
-        ReviewUpdateCodeReview (Err value) ->
-            ( setError model <| toString value, Cmd.none )
-
-        ReviewUpdateCodeChange (Ok changes) ->
+        UserAction userAction ->
             let
-                ( reviewData, changed ) =
-                    PageReview.updateChanges model.reviewData changes
+                userModel =
+                    Maybe.withDefault UserPage.init model.userPage
+
+                ( newModel, changed ) =
+                    UserPage.update userAction userModel
+
+                ( pageType, error ) =
+                    case newModel.error of
+                        Just _ ->
+                            ( Error, newModel.error )
+
+                        Nothing ->
+                            ( User, Nothing )
             in
-                ( { model | reviewData = reviewData }
+                ( { model
+                    | userPage = Just newModel
+                    , pageType = pageType
+                    , error = error
+                  }
                 , Ports.hasUpdates changed
                 )
-
-        ReviewUpdateCodeChange (Err value) ->
-            ( setError model <| toString value, Cmd.none )
-
-        ReviewUpdateUser (Ok details) ->
-            let
-                ( reviewData, changed ) =
-                    PageReview.updateUserDetails model.reviewData details
-            in
-                ( { model | reviewData = reviewData }
-                , Ports.hasUpdates changed
-                )
-
-        ReviewUpdateUser (Err value) ->
-            ( setError model <| toString value, Cmd.none )
 
 
 setError : Model -> String -> Model
 setError model error =
     { model | pageType = Error, error = Just error }
-
-
-requestTeam : Cmd Action
-requestTeam =
-    Http.send ReviewUpdateTeam (Http.get "/dashboard/team.json" PageReview.fromJsonTeam)
-
-
-requestChanges : String -> Cmd Action
-requestChanges user =
-    Http.send
-        ReviewUpdateCodeChange
-        (Http.get
-            ("/dashboard/commits/" ++ user ++ ".json")
-            PageReview.fromJsonChanges
-        )
-
-
-requestReviews : String -> Cmd Action
-requestReviews user =
-    Http.send
-        ReviewUpdateCodeReview
-        (Http.get
-            ("/dashboard/reviews/" ++ user ++ ".json")
-            PageReview.fromJsonReviews
-        )
-
-
-requestUser : String -> Cmd Action
-requestUser username =
-    Http.send
-        ReviewUpdateUser
-        (Http.get
-            ("/dashboard/users/" ++ username ++ ".json")
-            PageReview.fromJsonUserDetails
-        )
-
-
-requestUserAll : String -> Cmd Action
-requestUserAll username =
-    Cmd.batch
-        [ requestUser username
-        , requestChanges username
-        , requestReviews username
-        ]
-
-
-find : List a -> (a -> Bool) -> Maybe a
-find xs predicate =
-    case xs of
-        [] ->
-            Nothing
-
-        head :: tail ->
-            if (predicate head) then
-                Just head
-            else
-                find tail predicate
-
-
-findUser : Maybe Team -> String -> Maybe UserSummary
-findUser team username =
-    Maybe.andThen (\x -> find x.users (\item -> item.name == username)) team
-
-
-updateUser : Maybe PageReview.Model -> Maybe UserDetails -> ( Maybe PageReview.Model, Bool )
-updateUser model user =
-    case user of
-        Just userData ->
-            PageReview.updateUser model userData
-
-        Nothing ->
-            ( model, False )

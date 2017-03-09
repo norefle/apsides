@@ -1,32 +1,30 @@
 module Views.Components.ReviewSummary exposing (..)
 
-import Html exposing (Html, div, text, span, pre, a)
-import Html.Attributes exposing (attribute)
-import Date exposing (fromTime)
-import Date.Extra.Format exposing (utcIsoDateString)
-import Models.Actions exposing (CodeReview)
+import Html exposing (..)
+import Html.Attributes exposing (class, href)
+import Models.Types as Types
+import Models.Code as Code
+import Models.Actions exposing (Action)
 
 
-view : CodeReview -> Html msg
+view : Code.Review -> Html ()
 view review =
     div []
-        [ div [ attribute "class" "row" ]
-            [ div [ attribute "class" "col-md-12" ]
-                [ div [ attribute "class" "col-md-7" ]
-                    [ a [ attribute "href" review.url ]
+        [ div [ class "row" ]
+            [ div [ class "col-md-12" ]
+                [ div [ class "col-md-7" ]
+                    [ a [ href review.url ]
                         [ text review.id ]
                     ]
-                , div [ attribute "class" "col-md-2 text-right" ]
-                    [ text <| utcIsoDateString <| fromTime <| toFloat <| review.date * 1000 ]
-                , div [ attribute "class" "col-md-3 text-right" ]
+                , div [ class "col-md-2 text-right" ]
+                    [ text <| Types.timestampToIso <| review.date ]
+                , div [ class "col-md-3 text-right" ]
                     [ text "Approved: "
-                    , span [ attribute "class" "badge" ]
+                    , span [ class "badge" ]
                         [ text <| toString review.approved ]
                     ]
                 ]
-            ]
-        , div [ attribute "class" "row" ]
-            [ div [ attribute "class" "col-md-12" ]
+            , div [ class "col-md-12" ]
                 [ pre []
                     [ text review.description ]
                 ]

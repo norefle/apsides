@@ -6,13 +6,16 @@
       "last": 1473251216,
       "package": "Arenero",
       "removed": 546,
-      "url": "github/arenero"
+      "url": "github/arenero",
+      "id": "123456"
     },
     {
       "description": "Inital commit.",
       "package": "Thermometer",
+      "last": 1473251216,
       "removed": 140,
-      "url": "github/release-thermometer"
+      "url": "github/release-thermometer",
+      "id": "123458"
     }
   ]
 }

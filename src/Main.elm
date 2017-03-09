@@ -1,43 +1,53 @@
 module Main exposing (..)
 
 import Html exposing (Html)
-import Models.Actions exposing (Action)
 import Models.Page as PageModel
 import Views.Page as PageView
 import Time exposing (Time)
 
 
+type Action
+    = None
+    | PageAction PageModel.Action
+
+
 type alias Model =
-    { page : PageModel.Model
-    }
+    PageModel.Model
 
 
 init : ( Model, Cmd Action )
 init =
     let
-        ( pageModel, pageAction ) =
+        ( model, action ) =
             PageModel.init
     in
-        ( { page = pageModel }, pageAction )
+        ( model, Cmd.map PageAction action )
 
 
 update : Action -> Model -> ( Model, Cmd Action )
 update action model =
-    let
-        ( pageModel, pageAction ) =
-            PageModel.update action model.page
-    in
-        ( { model | page = pageModel }, pageAction )
+    case action of
+        None ->
+            ( model, Cmd.none )
+
+        PageAction pageAction ->
+            let
+                ( newModel, newAction ) =
+                    PageModel.update pageAction model
+            in
+                ( newModel, Cmd.map PageAction newAction )
 
 
 view : Model -> Html Action
 view model =
-    Html.div [] [ PageView.view model.page ]
+    Html.div []
+        [ PageView.view model |> Html.map PageAction ]
 
 
 subscriptions : Model -> Sub Action
 subscriptions model =
-    Time.every (15 * Time.minute) Models.Actions.TimeUpdate
+    Time.every (15 * Time.minute) PageModel.TimeUpdate
+        |> Sub.map PageAction
 
 
 main : Program Never Model Action

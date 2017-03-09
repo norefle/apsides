@@ -5,7 +5,7 @@ import Html.Attributes exposing (attribute)
 import Round exposing (round)
 
 
-view : Int -> Int -> Html msg
+view : Int -> Int -> Html ()
 view max value =
     let
         percents =

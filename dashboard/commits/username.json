@@ -6,7 +6,8 @@
       "last": 1473251216,
       "package": "Apsides",
       "removed": 340,
-      "url": "github/apsides"
+      "url": "github/apsides",
+      "id": "id-1"
     },
     {
       "added": 512,
@@ -14,7 +15,8 @@
       "last": 1473251216,
       "package": "Leser",
       "removed": 40,
-      "url": "github/leser"
+      "url": "github/leser",
+      "id": "id-2"
     },
     {
       "added": 458,
@@ -22,13 +24,16 @@
       "last": 1473251216,
       "package": "Arenero",
       "removed": 546,
-      "url": "github/arenero"
+      "url": "github/arenero",
+      "id": "id-3"
     },
     {
       "description": "Inital commit.",
       "package": "Thermometer",
       "removed": 140,
-      "url": "github/release-thermometer"
+      "url": "github/release-thermometer",
+      "id": "id-4",
+      "last": 1473251216
     }
   ]
 }
