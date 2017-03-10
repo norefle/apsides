@@ -11,51 +11,44 @@ import Views.Components.ReviewSummary as Review
 view : Page.Model -> Html Page.Action
 view model =
     div [ class "row" ]
-        [ div [ class "col-md-12" ]
-            [ div [ class "panel panel-default" ]
-                [ div [ class "panel-heading" ] [ text "Team" ]
-                , div [ class "panel-body" ]
-                    [ table [ class "table table-striped" ]
-                        [ colgroup []
-                            [ col [ class "col-md-1" ] []
-                            , col [ class "col-md-6" ] []
-                            , col [ class "col-md-1" ] []
-                            , col [ class "col-md-1" ] []
-                            , col [ class "col-md-1" ] []
-                            , col [ class "col-md-1" ] []
-                            , col [ class "col-md-1" ] []
-                            ]
-                        , thead []
-                            [ tr []
-                                [ td [] [ text "#" ]
-                                , td [] [ text "username" ]
-                                , td [] [ text "reviews" ]
-                                , td [] [ text "commits" ]
-                                , td [] [ text "packages" ]
-                                , td [] [ text "files" ]
-                                , td [] [ text "lines" ]
-                                ]
-                            ]
-                        , tbody []
-                            (model.team.users
-                                |> List.indexedMap (,)
-                                |> List.map userSummary
-                            )
+        [ div [ class "col-md-3" ]
+            [ teamSummary model.team.users ]
+        , div [ class "col-md-9" ]
+            [ reviews model.reviews
+            ]
+        ]
+
+
+teamSummary : List Team.User -> Html Page.Action
+teamSummary users =
+    div [ class "panel panel-default" ]
+        [ div [ class "panel-heading" ] [ text "Team" ]
+        , div [ class "panel-body" ]
+            [ table [ class "table table-striped" ]
+                [ colgroup []
+                    [ col [] []
+                    , col [] []
+                    , col [] []
+                    , col [] []
+                    , col [] []
+                    , col [] []
+                    , col [] []
+                    ]
+                , thead []
+                    [ tr []
+                        [ td [] [ text "#" ]
+                        , td [] [ text "username" ]
+                        , td [] [ text "reviews" ]
+                        , td [] [ text "commits" ]
+                        , td [] [ text "packages" ]
+                        , td [] [ text "files" ]
+                        , td [] [ text "lines" ]
                         ]
                     ]
-                ]
-            ]
-        , div [ class "col-md-12" ]
-            [ div [ class "panel panel-default" ]
-                [ div [ class "panel-heading" ]
-                    [ text "Reviews "
-                    , span [ class "badge" ]
-                        [ text <| toString <| List.length model.reviews ]
-                    ]
-                , div [ class "panel-body" ]
-                    (List.map
-                        (\( username, review ) -> Review.view username review |> Html.map translate)
-                        model.reviews
+                , tbody []
+                    (users
+                        |> List.indexedMap (,)
+                        |> List.map userSummary
                     )
                 ]
             ]
@@ -77,6 +70,22 @@ userSummary pair =
             , td [] [ text <| toString user.files ]
             , td [] [ text <| toString user.lines ]
             ]
+
+
+reviews : List Page.Review -> Html Page.Action
+reviews reviews =
+    div [ class "panel panel-default" ]
+        [ div [ class "panel-heading" ]
+            [ text "Reviews "
+            , span [ class "badge" ]
+                [ text <| toString <| List.length reviews ]
+            ]
+        , div [ class "panel-body" ]
+            (List.map
+                (\( username, review ) -> Review.view username review |> Html.map translate)
+                reviews
+            )
+        ]
 
 
 translate : () -> Page.Action

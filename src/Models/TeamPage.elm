@@ -13,9 +13,13 @@ type Action
     | SetUser String
 
 
+type alias Review =
+    ( String, Code.Review )
+
+
 type alias Model =
     { team : Team.Team
-    , reviews : List ( String, Code.Review )
+    , reviews : List Review
     , error : Maybe String
     }
 
