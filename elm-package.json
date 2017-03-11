@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Apsides - yet another team dashboard.",
-    "repository": "https://github.com/norefle/leser.git",
+    "repository": "https://github.com/norefle/apsides.git",
     "license": "MIT",
     "source-directories": [
         "src",
