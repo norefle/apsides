@@ -3,7 +3,7 @@ module Models.TeamPage exposing (..)
 import Http
 import Models.Team as Team
 import Models.Code as Code
-import Models.Types exposing (..)
+import Models.Types as Types
 
 
 type Action
@@ -32,7 +32,7 @@ init =
     }
 
 
-update : Action -> Model -> ( Model, Updated, Cmd Action )
+update : Action -> Model -> ( Model, Types.Updated, Cmd Action )
 update action model =
     case action of
         None ->
@@ -52,8 +52,19 @@ update action model =
                 newReviews =
                     List.map (\review -> ( username, review )) reviews
 
+                compareReview =
+                    \( leftName, leftReview ) ( rightName, rightReview ) ->
+                        case Code.compareReview leftReview rightReview of
+                            EQ ->
+                                compare leftName rightName
+
+                            result ->
+                                result
+
                 allReviews =
-                    List.append model.reviews newReviews
+                    newReviews
+                        |> List.append model.reviews
+                        |> Types.sort Types.Desc compareReview
             in
                 ( { model | reviews = allReviews }, True, Cmd.none )
 

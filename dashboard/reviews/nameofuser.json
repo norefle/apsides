@@ -1,11 +1,11 @@
 {
   "reviews": [
     {
-      "approved": 0,
+      "approved": 2,
       "description": "Add comments",
       "id": "ID-777",
       "iteration": 0,
-      "last": 1488384894,
+      "last": 1458380000,
       "url": "reviews/ID-777"
     },
     {

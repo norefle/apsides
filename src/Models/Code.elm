@@ -58,3 +58,8 @@ fromJsonToListReview : Decoder (List Review)
 fromJsonToListReview =
     decode (identity)
         |> required "reviews" (list fromJsonToReview)
+
+
+compareReview : Review -> Review -> Order
+compareReview left right =
+    compare left.date right.date
