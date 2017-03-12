@@ -1,7 +1,7 @@
 module Views.TeamPage exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 import Models.Team as Team
 import Models.TeamPage as Page
@@ -11,9 +11,9 @@ import Views.Components.ReviewSummary as Review
 view : Page.Model -> Html Page.Action
 view model =
     div [ class "row" ]
-        [ div [ class "col-md-3" ]
+        [ div [ class "col-md-12" ]
             [ teamSummary model.team.users ]
-        , div [ class "col-md-9" ]
+        , div [ class "col-md-12" ]
             [ reviews model.reviews
             ]
         ]
@@ -23,34 +23,32 @@ teamSummary : List Team.User -> Html Page.Action
 teamSummary users =
     div [ class "panel panel-default" ]
         [ div [ class "panel-heading" ] [ text "Team" ]
-        , div [ class "panel-body" ]
-            [ table [ class "table table-striped" ]
-                [ colgroup []
-                    [ col [] []
-                    , col [] []
-                    , col [] []
-                    , col [] []
-                    , col [] []
-                    , col [] []
-                    , col [] []
-                    ]
-                , thead []
-                    [ tr []
-                        [ td [] [ text "#" ]
-                        , td [] [ text "username" ]
-                        , td [] [ text "reviews" ]
-                        , td [] [ text "commits" ]
-                        , td [] [ text "packages" ]
-                        , td [] [ text "files" ]
-                        , td [] [ text "lines" ]
-                        ]
-                    ]
-                , tbody []
-                    (users
-                        |> List.indexedMap (,)
-                        |> List.map userSummary
-                    )
+        , table [ class "table table-striped" ]
+            [ colgroup []
+                [ col [] []
+                , col [] []
+                , col [] []
+                , col [] []
+                , col [] []
+                , col [] []
+                , col [] []
                 ]
+            , thead []
+                [ tr []
+                    [ td [] [ text "#" ]
+                    , td [] [ text "username" ]
+                    , td [] [ text "reviews" ]
+                    , td [] [ text "commits" ]
+                    , td [] [ text "packages" ]
+                    , td [] [ text "files" ]
+                    , td [] [ text "lines" ]
+                    ]
+                ]
+            , tbody []
+                (users
+                    |> List.indexedMap (,)
+                    |> List.map userSummary
+                )
             ]
         ]
 
@@ -63,7 +61,10 @@ userSummary pair =
     in
         tr []
             [ td [] [ text <| toString <| index + 1 ]
-            , td [] [ a [ onClick (Page.SetUser user.name) ] [ text user.name ] ]
+            , td []
+                [ a [ href "#", onClick (Page.SetUser user.name) ]
+                    [ text user.name ]
+                ]
             , td [] [ text <| toString user.reviews ]
             , td [] [ text <| toString user.commits ]
             , td [] [ text <| toString user.packages ]

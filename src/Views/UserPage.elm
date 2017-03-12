@@ -13,14 +13,12 @@ import Views.Components.ChangeSummary as Commit
 
 view : UserPage.Model -> Html UserPage.Action
 view model =
-    div []
-        [ div [ class "row" ]
-            [ div [ class "col-md-3 text-center" ]
-                [ profile model.user ]
-            , div [ class "col-md-9" ]
-                [ reviews model.user.name model.reviews
-                , commits model.commits
-                ]
+    div [ class "row" ]
+        [ div [ class "col-md-3 text-center" ]
+            [ profile model.user ]
+        , div [ class "col-md-9" ]
+            [ reviews model.user.name model.reviews
+            , commits model.commits
             ]
         ]
 
@@ -28,53 +26,75 @@ view model =
 profile : User.User -> Html UserPage.Action
 profile user =
     div [ class "panel panel-default" ]
-        [ div [ class "panel-heading" ] [ text user.name ]
+        [ div [ class "panel-heading" ]
+            [ text user.name ]
         , div [ class "panel-body" ]
-            [ div [ class "row" ]
-                [ img [ src user.userpic ] [] ]
-            , div [ class "row text-left" ]
-                [ topPackages user.packages 10
+            [ img [ src user.userpic ] [] ]
+        , div [ class "well well-sm" ] [ text "Top 10 packages" ]
+        , table [ class "table table-striped" ]
+            [ colgroup []
+                [ col [] []
+                , col [] []
                 ]
-            , div [ class "row text-left" ]
-                [ p [] [ text "Statistics (min | average | median | max)" ]
-                , ul [ class "list-group" ]
-                    [ statisticsItem "Files" user .files
-                    , statisticsItem "Added lines" user .added
-                    , statisticsItem "Removed lines" user .removed
+            , thead []
+                [ tr []
+                    [ td [ class "text-left" ] [ text "Package" ]
+                    , td [ class "text-right" ] [ text "Commits" ]
                     ]
+                ]
+            , tbody []
+                (topPackages user.packages 10)
+            ]
+        , div [ class "well well-sm" ] [ text "User statistics" ]
+        , table [ class "table table-striped" ]
+            [ colgroup []
+                [ col [] []
+                , col [] []
+                , col [] []
+                , col [] []
+                , col [] []
+                ]
+            , thead []
+                [ tr []
+                    [ td [ class "text-left" ] [ text "Type" ]
+                    , td [ class "text-right" ] [ text "Min" ]
+                    , td [ class "text-right" ] [ text "Average" ]
+                    , td [ class "text-right" ] [ text "Median" ]
+                    , td [ class "text-right" ] [ text "Max" ]
+                    ]
+                ]
+            , tbody []
+                [ statisticsItem "Files" user .files
+                , statisticsItem "Lines +" user .added
+                , statisticsItem "Lines -" user .removed
                 ]
             ]
         ]
 
 
-topPackages : List Change.Package -> Int -> Html UserPage.Action
+topPackages : List Change.Package -> Int -> List (Html UserPage.Action)
 topPackages list limit =
-    p []
-        [ text <| "Top " ++ (toString limit) ++ " packages (number of changes)"
-        , ul [ class "list-group" ]
-            (List.map
-                packageItem
-                (Types.sort Types.Desc compareByTouched list |> List.take limit)
-            )
-        ]
+    Types.sort Types.Desc compareByTouched list
+        |> List.take limit
+        |> List.map packageItem
 
 
 packageItem : Change.Package -> Html UserPage.Action
 packageItem package =
-    li [ class "list-group-item" ]
-        [ span [ class "badge" ] [ text <| toString package.touched ]
-        , a [ href package.url ] [ text package.name ]
+    tr []
+        [ td [ class "text-left" ] [ a [ href package.url ] [ text package.name ] ]
+        , td [ class "text-right" ] [ text <| toString package.touched ]
         ]
 
 
 statisticsItem : String -> User.User -> (User.Statistics -> Int) -> Html UserPage.Action
 statisticsItem name user getValue =
-    li [ class "list-group-item" ]
-        [ span [ class "badge" ] [ text <| toString <| getValue user.max ]
-        , span [ class "badge" ] [ text <| toString <| getValue user.median ]
-        , span [ class "badge" ] [ text <| toString <| getValue user.average ]
-        , span [ class "badge" ] [ text <| toString <| getValue user.min ]
-        , text name
+    tr []
+        [ td [ class "text-left" ] [ text name ]
+        , td [ class "text-right" ] [ text <| toString <| getValue user.min ]
+        , td [ class "text-right" ] [ text <| toString <| getValue user.average ]
+        , td [ class "text-right" ] [ text <| toString <| getValue user.median ]
+        , td [ class "text-right" ] [ text <| toString <| getValue user.max ]
         ]
 
 

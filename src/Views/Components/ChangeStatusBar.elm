@@ -1,8 +1,7 @@
 module Views.Components.ChangeStatusBar exposing (view)
 
-import Html exposing (Html)
-import Html.Attributes exposing (attribute)
-import Round exposing (round)
+import Html exposing (..)
+import Html.Attributes exposing (class, attribute)
 
 
 view : Int -> Int -> Html ()
@@ -10,28 +9,36 @@ view added removed =
     let
         total =
             added + removed
+
+        addedInPercent =
+            percentage total added
+
+        removeInPercent =
+            100 - addedInPercent
     in
-        Html.div [ attribute "class" "progress" ]
-            [ Html.div
-                [ attribute "class" "progress-bar progress-bar-success"
-                , attribute "style" (percentage total added)
+        div [ class "progress" ]
+            [ div
+                [ class "progress-bar progress-bar-success"
+                , attribute "style" (styleWidth addedInPercent)
                 ]
-                [ Html.text <| toString added ]
-            , Html.div
-                [ attribute "class" "progress-bar progress-bar-danger"
-                , attribute "style" (percentage total removed)
+                [ text <| toString added ]
+            , div
+                [ class "progress-bar progress-bar-danger"
+                , attribute "style" (styleWidth removeInPercent)
                 ]
-                [ Html.text <| toString removed ]
+                [ text <| toString removed ]
             ]
 
 
-percentage : Int -> Int -> String
+styleWidth : Int -> String
+styleWidth value =
+    "width: " ++ (toString value) ++ "%"
+
+
+percentage : Int -> Int -> Int
 percentage total value =
     let
         ratio =
-            if total /= 0 then
-                toFloat value / toFloat total
-            else
-                toFloat value
+            (toFloat value / toFloat total) * 100.0
     in
-        "width: " ++ (Round.floor 0 <| ratio * 100) ++ "%"
+        round ratio

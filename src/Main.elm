@@ -40,8 +40,7 @@ update action model =
 
 view : Model -> Html Action
 view model =
-    Html.div []
-        [ PageView.view model |> Html.map PageAction ]
+    PageView.view model |> Html.map PageAction
 
 
 subscriptions : Model -> Sub Action

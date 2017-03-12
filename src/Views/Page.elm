@@ -1,6 +1,7 @@
 module Views.Page exposing (..)
 
 import Html exposing (..)
+import Html.Attributes exposing (class)
 import Models.Page as Page
 import Views.Navbar as Navbar
 import Views.UserPage as UserPage
@@ -12,7 +13,8 @@ view : Page.Model -> Html Page.Action
 view model =
     div []
         [ Navbar.view model
-        , showPage model
+        , div [ class "container-fluid" ]
+            [ showPage model ]
         ]
 
 
