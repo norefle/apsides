@@ -6,16 +6,30 @@ import Html.Events exposing (onClick)
 import Models.Team as Team
 import Models.TeamPage as Page
 import Views.Components.ReviewSummary as Review
+import Views.Components.Calendar as Calendar
 
 
 view : Page.Model -> Html Page.Action
 view model =
     div [ class "row" ]
-        [ div [ class "col-md-12" ]
+        [ div [ class "col-md-4" ]
             [ teamSummary model.team.users ]
-        , div [ class "col-md-12" ]
-            [ reviews model.reviews
+        , div [ class "col-md-8" ]
+            [ calendarSummary
+            , reviews model.reviews
             ]
+        ]
+
+
+calendarSummary : Html Page.Action
+calendarSummary =
+    div [ class "panel panel-default" ]
+        [ div [ class "panel-heading" ]
+            [ text "Activities "
+            , span [ class "badge" ] [ text "0" ]
+            ]
+        , div [ class "panel-body text-center" ]
+            [ Calendar.view [] |> Html.map translate ]
         ]
 
 

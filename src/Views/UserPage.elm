@@ -2,6 +2,7 @@ module Views.UserPage exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, href, src)
+import Date exposing (Date)
 import Models.Types as Types
 import Models.UserPage as UserPage
 import Models.Change as Change
@@ -9,15 +10,17 @@ import Models.Code as Code
 import Models.User as User
 import Views.Components.ReviewSummary as Review
 import Views.Components.ChangeSummary as Commit
+import Views.Components.Calendar as Calendar
 
 
 view : UserPage.Model -> Html UserPage.Action
 view model =
     div [ class "row" ]
-        [ div [ class "col-md-3 text-center" ]
+        [ div [ class "col-md-4 text-center" ]
             [ profile model.user ]
-        , div [ class "col-md-9" ]
-            [ reviews model.user.name model.reviews
+        , div [ class "col-md-8" ]
+            [ activity []
+            , reviews model.user.name model.reviews
             , commits model.commits
             ]
         ]
@@ -95,6 +98,18 @@ statisticsItem name user getValue =
         , td [ class "text-right" ] [ text <| toString <| getValue user.average ]
         , td [ class "text-right" ] [ text <| toString <| getValue user.median ]
         , td [ class "text-right" ] [ text <| toString <| getValue user.max ]
+        ]
+
+
+activity : List ( Date, Int ) -> Html UserPage.Action
+activity list =
+    div [ class "panel panel-default" ]
+        [ div [ class "panel-heading" ]
+            [ text "Activities "
+            , span [ class "badge" ] [ text <| toString <| List.length list ]
+            ]
+        , div [ class "panel-body text-center" ]
+            [ Calendar.view list |> Html.map translate ]
         ]
 
 
