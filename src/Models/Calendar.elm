@@ -133,7 +133,7 @@ getFirstDate weeksTotal today =
             Types.indexOf (\weekDay -> currentWeekDay == weekDay) days
 
         todayInCalendar =
-            (weeksTotal - 1) * 7 + (offset + 1)
+            (weeksTotal - 1) * 7 + offset
     in
         (removeTime today) - ((toFloat todayInCalendar) * oneDay)
 
