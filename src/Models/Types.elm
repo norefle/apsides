@@ -46,3 +46,21 @@ timestampToIso time =
         |> toFloat
         |> fromTime
         |> utcIsoDateString
+
+
+indexOf : (a -> Bool) -> List a -> Int
+indexOf predicate list =
+    let
+        loop : (a -> Bool) -> Int -> List a -> Int
+        loop predicate counter list =
+            case list of
+                [] ->
+                    counter
+
+                x :: xs ->
+                    if predicate x then
+                        counter + 1
+                    else
+                        loop predicate (counter + 1) xs
+    in
+        loop predicate (-1) list

@@ -7,6 +7,8 @@ import Models.Team as Team
 import Models.TeamPage as Page
 import Views.Components.ReviewSummary as Review
 import Views.Components.Calendar as Calendar
+import Date exposing (Date)
+import Models.Calendar as Calendar
 
 
 view : Page.Model -> Html Page.Action
@@ -15,21 +17,21 @@ view model =
         [ div [ class "col-md-4" ]
             [ teamSummary model.team.users ]
         , div [ class "col-md-8" ]
-            [ calendarSummary
+            [ calendarSummary model.today model.calendar
             , reviews model.reviews
             ]
         ]
 
 
-calendarSummary : Html Page.Action
-calendarSummary =
+calendarSummary : Date -> Calendar.Activity -> Html Page.Action
+calendarSummary today activity =
     div [ class "panel panel-default" ]
         [ div [ class "panel-heading" ]
             [ text "Activities "
             , span [ class "badge" ] [ text "0" ]
             ]
         , div [ class "panel-body text-center" ]
-            [ Calendar.view [] |> Html.map translate ]
+            [ Calendar.view today activity |> Html.map translate ]
         ]
 
 

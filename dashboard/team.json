@@ -1,4 +1,18 @@
 {
+  "activities": [
+    {
+      "commits": 20,
+      "date": "2016-09-07"
+    },
+    {
+      "commits": 13,
+      "date": "2017-03-21"
+    },
+    {
+      "commits": 99,
+      "date": "2016-11-27"
+    }
+  ],
   "users": [
     {
       "commits": 4,

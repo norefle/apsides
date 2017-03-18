@@ -2,14 +2,19 @@ module Models.TeamPage exposing (..)
 
 import Http
 import Models.Team as Team
+import Models.Calendar as Calendar
 import Models.Code as Code
 import Models.Types as Types
+import Time exposing (Time)
+import Date exposing (Date)
+import Task
 
 
 type Action
     = None
     | UpdateTeam (Result Http.Error Team.Team)
     | UpdateReviews String (Result Http.Error (List Code.Review))
+    | UpdateTime Time
     | SetUser String
 
 
@@ -20,14 +25,18 @@ type alias Review =
 type alias Model =
     { team : Team.Team
     , reviews : List Review
+    , calendar : Calendar.Activity
+    , today : Date
     , error : Maybe String
     }
 
 
 init : Model
 init =
-    { team = { users = [] }
+    { team = { users = [], activities = [] }
     , reviews = []
+    , calendar = Calendar.empty
+    , today = Date.fromTime 0
     , error = Nothing
     }
 
@@ -39,9 +48,21 @@ update action model =
             ( model, False, Cmd.none )
 
         UpdateTeam (Ok team) ->
-            ( { model | team = team, reviews = [] }
+            ( { model
+                | team = team
+                , reviews = []
+                , calendar =
+                    List.foldl
+                        (\activity calendar ->
+                            Calendar.combineDates
+                                ( activity.date, activity.commits )
+                                calendar
+                        )
+                        Calendar.empty
+                        team.activities
+              }
             , model.team /= team
-            , requestAllReviews team.users
+            , Cmd.batch [ requestAllReviews team.users, requestTime ]
             )
 
         UpdateTeam (Err error) ->
@@ -71,8 +92,16 @@ update action model =
         UpdateReviews _ (Err error) ->
             ( { model | error = Just (toString error) }, True, Cmd.none )
 
+        UpdateTime today ->
+            ( { model | today = Date.fromTime today }, False, Cmd.none )
+
         SetUser _ ->
             ( model, False, Cmd.none )
+
+
+requestTime : Cmd Action
+requestTime =
+    Task.perform UpdateTime Time.now
 
 
 requestTeam : Cmd Action

@@ -133,7 +133,7 @@ update action model =
                 userModel =
                     Maybe.withDefault UserPage.init model.userPage
 
-                ( newModel, changed ) =
+                ( newModel, changed, action ) =
                     UserPage.update userAction userModel
 
                 ( pageType, error ) =
@@ -149,7 +149,10 @@ update action model =
                     , pageType = pageType
                     , error = error
                   }
-                , Ports.hasUpdates changed
+                , Cmd.batch
+                    [ Ports.hasUpdates changed
+                    , Cmd.map UserAction action
+                    ]
                 )
 
 

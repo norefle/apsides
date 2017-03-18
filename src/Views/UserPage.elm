@@ -8,6 +8,7 @@ import Models.UserPage as UserPage
 import Models.Change as Change
 import Models.Code as Code
 import Models.User as User
+import Models.Calendar as Calendar
 import Views.Components.ReviewSummary as Review
 import Views.Components.ChangeSummary as Commit
 import Views.Components.Calendar as Calendar
@@ -19,7 +20,7 @@ view model =
         [ div [ class "col-md-4 text-center" ]
             [ profile model.user ]
         , div [ class "col-md-8" ]
-            [ activity []
+            [ activity model.today model.activities
             , reviews model.user.name model.reviews
             , commits model.commits
             ]
@@ -101,15 +102,15 @@ statisticsItem name user getValue =
         ]
 
 
-activity : List ( Date, Int ) -> Html UserPage.Action
-activity list =
+activity : Date -> Calendar.Activity -> Html UserPage.Action
+activity today activity =
     div [ class "panel panel-default" ]
         [ div [ class "panel-heading" ]
             [ text "Activities "
-            , span [ class "badge" ] [ text <| toString <| List.length list ]
+            , span [ class "badge" ] [ text <| toString <| Calendar.length activity ]
             ]
         , div [ class "panel-body text-center" ]
-            [ Calendar.view list |> Html.map translate ]
+            [ Calendar.view today activity |> Html.map translate ]
         ]
 
 
