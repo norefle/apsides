@@ -9,13 +9,14 @@ import Views.Components.ReviewSummary as Review
 import Views.Components.Calendar as Calendar
 import Date exposing (Date)
 import Models.Calendar as Calendar
+import Models.Types as Types
 
 
 view : Page.Model -> Html Page.Action
 view model =
     div [ class "row" ]
         [ div [ class "col-md-4" ]
-            [ teamSummary model.team.users ]
+            [ teamSummary model.userOrder model.team.users ]
         , div [ class "col-md-8" ]
             [ calendarSummary model.today model.calendar
             , reviews model.reviews
@@ -35,8 +36,8 @@ calendarSummary today activity =
         ]
 
 
-teamSummary : List Team.User -> Html Page.Action
-teamSummary users =
+teamSummary : ( Page.SortBy, Types.SortOrder ) -> List Team.User -> Html Page.Action
+teamSummary order users =
     div [ class "panel panel-default" ]
         [ div [ class "panel-heading" ] [ text "Team" ]
         , table [ class "table table-striped" ]
@@ -52,12 +53,12 @@ teamSummary users =
             , thead []
                 [ tr []
                     [ td [] [ text "#" ]
-                    , td [] [ text "username" ]
-                    , td [] [ text "reviews" ]
-                    , td [] [ text "commits" ]
-                    , td [] [ text "packages" ]
-                    , td [] [ text "files" ]
-                    , td [] [ text "lines" ]
+                    , td [ onClick (Page.SortUsers Page.Name) ] [ text <| headerName Name order ]
+                    , td [ class "text-right", onClick (Page.SortUsers Page.Reviews) ] [ text <| headerName Reviews order ]
+                    , td [ class "text-right", onClick (Page.SortUsers Page.Commits) ] [ text <| headerName Commits order ]
+                    , td [ class "text-right", onClick (Page.SortUsers Page.Packages) ] [ text <| headerName Packages order ]
+                    , td [ class "text-right", onClick (Page.SortUsers Page.Files) ] [ text <| headerName Files order ]
+                    , td [ class "text-right", onClick (Page.SortUsers Page.Lines) ] [ text <| headerName Lines order ]
                     ]
                 ]
             , tbody []
@@ -81,11 +82,11 @@ userSummary pair =
                 [ a [ href "#", onClick (Page.SetUser user.name) ]
                     [ text user.name ]
                 ]
-            , td [] [ text <| toString user.reviews ]
-            , td [] [ text <| toString user.commits ]
-            , td [] [ text <| toString user.packages ]
-            , td [] [ text <| toString user.files ]
-            , td [] [ text <| toString user.lines ]
+            , td [ class "text-right" ] [ text <| toString user.reviews ]
+            , td [ class "text-right" ] [ text <| toString user.commits ]
+            , td [ class "text-right" ] [ text <| toString user.packages ]
+            , td [ class "text-right" ] [ text <| toString user.files ]
+            , td [ class "text-right" ] [ text <| toString user.lines ]
             ]
 
 
@@ -108,3 +109,77 @@ reviews reviews =
 translate : () -> Page.Action
 translate _ =
     Page.None
+
+
+type Header
+    = Name
+    | Reviews
+    | Commits
+    | Packages
+    | Files
+    | Lines
+
+
+sortingPrefix : Types.SortOrder -> String
+sortingPrefix order =
+    case order of
+        Types.Asc ->
+            "△ "
+
+        Types.Desc ->
+            "▽ "
+
+
+sortedBy : Header -> Page.SortBy -> Bool
+sortedBy header by =
+    case ( header, by ) of
+        ( Name, Page.Name ) ->
+            True
+
+        ( Reviews, Page.Reviews ) ->
+            True
+
+        ( Commits, Page.Commits ) ->
+            True
+
+        ( Packages, Page.Packages ) ->
+            True
+
+        ( Files, Page.Files ) ->
+            True
+
+        ( Lines, Page.Lines ) ->
+            True
+
+        _ ->
+            False
+
+
+prefix : Header -> Page.SortBy -> Types.SortOrder -> String
+prefix header by order =
+    if sortedBy header by then
+        sortingPrefix order
+    else
+        ""
+
+
+headerName : Header -> ( Page.SortBy, Types.SortOrder ) -> String
+headerName header order =
+    case header of
+        Name ->
+            (uncurry (prefix header) order) ++ "username"
+
+        Reviews ->
+            (uncurry (prefix header) order) ++ "reviews"
+
+        Commits ->
+            (uncurry (prefix header) order) ++ "commits"
+
+        Packages ->
+            (uncurry (prefix header) order) ++ "packages"
+
+        Files ->
+            (uncurry (prefix header) order) ++ "files"
+
+        Lines ->
+            (uncurry (prefix header) order) ++ "lines"

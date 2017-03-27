@@ -16,6 +16,7 @@ type Action
     | UpdateReviews String (Result Http.Error (List Code.Review))
     | UpdateTime Time
     | SetUser String
+    | SortUsers SortBy
 
 
 type alias Review =
@@ -26,9 +27,19 @@ type alias Model =
     { team : Team.Team
     , reviews : List Review
     , calendar : Calendar.Activity
+    , userOrder : ( SortBy, Types.SortOrder )
     , today : Date
     , error : Maybe String
     }
+
+
+type SortBy
+    = Name
+    | Commits
+    | Reviews
+    | Packages
+    | Files
+    | Lines
 
 
 init : Model
@@ -36,6 +47,7 @@ init =
     { team = { users = [], activities = [] }
     , reviews = []
     , calendar = Calendar.empty
+    , userOrder = ( Name, Types.Asc )
     , today = Date.fromTime 0
     , error = Nothing
     }
@@ -48,10 +60,8 @@ update action model =
             ( model, False, Cmd.none )
 
         UpdateTeam (Ok team) ->
-            ( { model
-                | team = team
-                , reviews = []
-                , calendar =
+            let
+                calendar =
                     List.foldl
                         (\activity calendar ->
                             Calendar.combineDates
@@ -60,10 +70,18 @@ update action model =
                         )
                         Calendar.empty
                         team.activities
-              }
-            , model.team /= team
-            , Cmd.batch [ requestAllReviews team.users, requestTime ]
-            )
+
+                sortedUsers =
+                    sortUsers model.userOrder team.users
+            in
+                ( { model
+                    | team = { users = sortedUsers, activities = team.activities }
+                    , reviews = []
+                    , calendar = calendar
+                  }
+                , model.team /= team
+                , Cmd.batch [ requestAllReviews team.users, requestTime ]
+                )
 
         UpdateTeam (Err error) ->
             ( { model | error = Just (toString error) }, True, Cmd.none )
@@ -98,6 +116,28 @@ update action model =
         SetUser _ ->
             ( model, False, Cmd.none )
 
+        SortUsers by ->
+            let
+                ( currentBy, currentOrder ) =
+                    model.userOrder
+
+                newOrder =
+                    if currentBy /= by then
+                        ( by, Types.Desc )
+                    else
+                        ( currentBy, Types.inverseOrder currentOrder )
+
+                sortedUsers =
+                    sortUsers newOrder model.team.users
+            in
+                ( { model
+                    | team = { users = sortedUsers, activities = model.team.activities }
+                    , userOrder = newOrder
+                  }
+                , False
+                , Cmd.none
+                )
+
 
 requestTime : Cmd Action
 requestTime =
@@ -124,3 +164,31 @@ requestReviews username =
         ("/dashboard/reviews/" ++ username ++ ".json")
         Code.fromJsonToListReview
         |> Http.send (UpdateReviews username)
+
+
+comparator : SortBy -> (Team.User -> Team.User -> Order)
+comparator order =
+    case order of
+        Name ->
+            (\left right -> compare left.name right.name)
+
+        Commits ->
+            (\left right -> compare left.commits right.commits)
+
+        Reviews ->
+            (\left right -> compare left.reviews right.reviews)
+
+        Packages ->
+            (\left right -> compare left.packages right.packages)
+
+        Files ->
+            (\left right -> compare left.files right.files)
+
+        Lines ->
+            (\left right -> compare left.lines right.lines)
+
+
+sortUsers : ( SortBy, Types.SortOrder ) -> List Team.User -> List Team.User
+sortUsers ( by, order ) users =
+    users
+        |> Types.sort order (comparator by)

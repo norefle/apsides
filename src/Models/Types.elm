@@ -13,6 +13,14 @@ type SortOrder
     | Desc
 
 
+inverseOrder : SortOrder -> SortOrder
+inverseOrder current =
+    if current == Asc then
+        Desc
+    else
+        Asc
+
+
 sort : SortOrder -> (a -> a -> Order) -> List a -> List a
 sort order cmp list =
     let
