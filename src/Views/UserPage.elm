@@ -106,7 +106,7 @@ activity : Date -> Calendar.Activity -> Html UserPage.Action
 activity today activity =
     div [ class "panel panel-default" ]
         [ div [ class "panel-heading" ]
-            [ text "Activities "
+            [ text "Active days "
             , span [ class "badge" ] [ text <| toString <| Calendar.length activity ]
             ]
         , div [ class "panel-body text-center" ]

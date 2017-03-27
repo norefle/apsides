@@ -27,8 +27,8 @@ calendarSummary : Date -> Calendar.Activity -> Html Page.Action
 calendarSummary today activity =
     div [ class "panel panel-default" ]
         [ div [ class "panel-heading" ]
-            [ text "Activities "
-            , span [ class "badge" ] [ text "0" ]
+            [ text "Active days "
+            , span [ class "badge" ] [ text <| toString <| Calendar.length activity ]
             ]
         , div [ class "panel-body text-center" ]
             [ Calendar.view today activity |> Html.map translate ]
