@@ -1,6 +1,7 @@
 module Models.Calendar exposing (..)
 
 import Date exposing (Date)
+import Date.Extra.Duration as Duration
 import Time
 import Dict exposing (Dict)
 import Models.Types as Types
@@ -140,7 +141,10 @@ getFirstDate weeksTotal today =
 
 getDate : Millis -> DayNumber -> Millis
 getDate base day =
-    base + (toFloat day) * oneDay |> fromMillis |> removeTime
+    base
+        |> fromMillis
+        |> Duration.add Duration.Day day
+        |> removeTime
 
 
 getFirstWeeks : Millis -> Int -> List FirstWeek
